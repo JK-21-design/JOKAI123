@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Patient Readings - Jokai Hospital</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f2f9fb; margin: 0; padding: 0;">
+
+    <div style="background-color: #004080; color: white; padding: 20px; text-align: center;">
+        <h1>JOKAI NATIONAL HOSPITAL</h1>
+        <h2>All Patient Blood Pressure Readings</h2>
+    </div>
+
+    <div style="padding: 30px;">
+        {% for entry in data %}
+            <h3 style="color: #004080;">Patient: {{ entry.patient.name }} (Device ID: {{ entry.patient.device_id }})</h3>
+
+            {% if entry.readings %}
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+                    <thead>
+                        <tr style="background-color: #007acc; color: white;">
+                            <th style="padding: 10px; border: 1px solid #ddd;">Date & Time</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Systolic (mmHg)</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Diastolic (mmHg)</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reading in entry.readings %}
+                            <tr style="background-color: #f9f9f9;">
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ reading.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ reading.systolic }}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ reading.diastolic }}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">{{ reading.status }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p style="color: #888;">No readings available for this patient.</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="/" style="text-decoration: none; background-color: #004080; color: white; padding: 10px 20px; border-radius: 6px;">Back to Home</a>
+    </div>
+
+</body>
+</html>
