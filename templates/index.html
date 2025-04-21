@@ -120,6 +120,13 @@
     </div>
 
     <!-- ESP32 Connection Status -->
+    <div id="esp32-warning" class="warning-banner" style="display: none;">
+        <div class="warning-content">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Warning: ESP32 device is not connected. Some features may be unavailable.</span>
+        </div>
+    </div>
+
     <div class="esp32-status">
         <h2 style="color: #004080;">ESP32 Connection Status</h2>
         <div class="connection-info">
@@ -391,6 +398,27 @@
     display: flex;
     gap: 10px;
 }
+
+.warning-banner {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.warning-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #856404;
+}
+
+.warning-content i {
+    font-size: 1.2em;
+}
 </style>
 
 {% block extra_js %}
@@ -509,6 +537,7 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     document.head.appendChild(style);
 
+    const esp32Warning = document.getElementById('esp32-warning');
     const esp32StatusDot = document.getElementById('esp32-status-dot');
     const esp32StatusText = document.getElementById('esp32-status-text');
     const connectBtn = document.getElementById('connect-esp32');
@@ -532,11 +561,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 esp32StatusText.textContent = 'ESP32 Connected';
                 connectBtn.disabled = true;
                 disconnectBtn.disabled = false;
+                esp32Warning.style.display = 'none';
             } else {
                 esp32StatusDot.className = 'status-dot disconnected';
                 esp32StatusText.textContent = 'ESP32 Disconnected';
                 connectBtn.disabled = false;
                 disconnectBtn.disabled = true;
+                esp32Warning.style.display = 'block';
                 
                 // Clear intervals if device is disconnected
                 if (statusCheckInterval) {
@@ -554,6 +585,7 @@ document.addEventListener('DOMContentLoaded', function() {
             esp32StatusText.textContent = 'ESP32 Disconnected';
             connectBtn.disabled = false;
             disconnectBtn.disabled = true;
+            esp32Warning.style.display = 'block';
         }
     }
 
