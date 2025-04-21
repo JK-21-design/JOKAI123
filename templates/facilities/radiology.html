@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Radiology Services - Jokai Hospital{% endblock %}
+
+{% block content %}
+<div class="facility-header">
+    <h1>Radiology Services</h1>
+    <p class="subtitle">Advanced Imaging Technology for Accurate Diagnosis</p>
+</div>
+
+<div class="facility-content">
+    <section class="facility-section">
+        <div class="facility-image">
+            <img src="/static/images/radiology.jpg" alt="Radiology Services">
+        </div>
+        
+        <div class="facility-details">
+            <h2>State-of-the-Art Imaging Center</h2>
+            <p>Our radiology department is equipped with the latest imaging technology, providing comprehensive diagnostic services. Our team of board-certified radiologists and skilled technologists work together to deliver accurate and timely results.</p>
+            
+            <h3>Imaging Services:</h3>
+            <ul>
+                <li>X-Ray Imaging</li>
+                <li>Computed Tomography (CT)</li>
+                <li>Magnetic Resonance Imaging (MRI)</li>
+                <li>Ultrasound</li>
+                <li>Mammography</li>
+                <li>Nuclear Medicine</li>
+                <li>Interventional Radiology</li>
+            </ul>
+            
+            <h3>Key Features:</h3>
+            <ul>
+                <li>Digital imaging technology</li>
+                <li>3D reconstruction capabilities</li>
+                <li>Low-dose radiation protocols</li>
+                <li>24/7 emergency imaging services</li>
+                <li>Picture Archiving and Communication System (PACS)</li>
+                <li>Radiologist consultation services</li>
+            </ul>
+
+            <div class="radiology-info">
+                <h3>Radiology Department Hours</h3>
+                <p>General Radiology:</p>
+                <p>Monday - Friday: 7:00 AM - 7:00 PM</p>
+                <p>Saturday: 8:00 AM - 4:00 PM</p>
+                <p>Emergency imaging services available 24/7</p>
+                <p>Appointments required for MRI and CT scans</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .facility-header {
+        background: linear-gradient(rgba(0, 64, 128, 0.8), rgba(0, 64, 128, 0.8)),
+                    url('/static/images/radiology_bg.jpg') no-repeat center center;
+        background-size: cover;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .facility-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .facility-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .facility-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .facility-image img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .facility-details h2 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .facility-details h3 {
+        color: var(--primary-color);
+        margin: 1.5rem 0 1rem;
+    }
+
+    .facility-details ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .facility-details li {
+        margin-bottom: 0.5rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .facility-details li:before {
+        content: "•";
+        color: var(--primary-color);
+        position: absolute;
+        left: 0;
+    }
+
+    .radiology-info {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 2rem;
+    }
+
+    .radiology-info p {
+        margin: 0.5rem 0;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+        .facility-section {
+            grid-template-columns: 1fr;
+        }
+
+        .facility-header h1 {
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %} 

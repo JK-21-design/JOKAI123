@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Advanced Imaging Center - Jokai Hospital{% endblock %}
+
+{% block content %}
+<div class="facility-header">
+    <h1>Advanced Imaging Center</h1>
+    <p class="subtitle">Precision diagnostics through cutting-edge imaging technology</p>
+</div>
+
+<div class="facility-content">
+    <section class="facility-section">
+        <div class="facility-image">
+            <img src="/static/images/imaging_center.jpg" alt="Advanced Imaging Center">
+        </div>
+        
+        <div class="facility-details">
+            <h2>Comprehensive Diagnostic Imaging</h2>
+            <p>Our imaging center is equipped with state-of-the-art technology to provide accurate and detailed diagnostic imaging services. Our team of experienced radiologists and technicians ensure the highest quality of care and precise results.</p>
+            
+            <h3>Imaging Services:</h3>
+            <ul>
+                <li>MRI (Magnetic Resonance Imaging)</li>
+                <li>CT (Computed Tomography)</li>
+                <li>Ultrasound</li>
+                <li>X-Ray</li>
+                <li>Mammography</li>
+                <li>Nuclear Medicine</li>
+            </ul>
+            
+            <h3>Advanced Features:</h3>
+            <ul>
+                <li>3D imaging capabilities</li>
+                <li>Low-dose radiation technology</li>
+                <li>Digital image processing</li>
+                <li>Rapid results turnaround</li>
+                <li>Tele-radiology services</li>
+            </ul>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .facility-header {
+        background: linear-gradient(rgba(0, 64, 128, 0.8), rgba(0, 64, 128, 0.8)),
+                    url('/static/images/imaging_bg.jpg') no-repeat center center;
+        background-size: cover;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .facility-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .facility-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .facility-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .facility-image img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .facility-details h2 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .facility-details h3 {
+        color: var(--primary-color);
+        margin: 1.5rem 0 1rem;
+    }
+
+    .facility-details ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .facility-details li {
+        margin-bottom: 0.5rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .facility-details li:before {
+        content: "•";
+        color: var(--primary-color);
+        position: absolute;
+        left: 0;
+    }
+
+    @media (max-width: 768px) {
+        .facility-section {
+            grid-template-columns: 1fr;
+        }
+
+        .facility-header h1 {
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %} 

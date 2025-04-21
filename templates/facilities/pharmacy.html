@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Pharmacy Services - Jokai Hospital{% endblock %}
+
+{% block content %}
+<div class="facility-header">
+    <h1>Pharmacy Services</h1>
+    <p class="subtitle">Comprehensive Medication Management and Care</p>
+</div>
+
+<div class="facility-content">
+    <section class="facility-section">
+        <div class="facility-image">
+            <img src="/static/images/pharmacy.jpg" alt="Pharmacy Services">
+        </div>
+        
+        <div class="facility-details">
+            <h2>Hospital Pharmacy</h2>
+            <p>Our pharmacy department provides comprehensive medication services, ensuring safe and effective drug therapy for all patients. Our team of licensed pharmacists and pharmacy technicians are dedicated to providing excellent pharmaceutical care.</p>
+            
+            <h3>Pharmacy Services:</h3>
+            <ul>
+                <li>Inpatient Medication Dispensing</li>
+                <li>Outpatient Prescription Services</li>
+                <li>Medication Counseling</li>
+                <li>Compounding Services</li>
+                <li>Medication Therapy Management</li>
+                <li>Specialty Medications</li>
+                <li>Vaccination Services</li>
+            </ul>
+            
+            <h3>Key Features:</h3>
+            <ul>
+                <li>24/7 emergency medication access</li>
+                <li>Electronic prescription management</li>
+                <li>Medication reconciliation services</li>
+                <li>Patient education programs</li>
+                <li>Drug interaction screening</li>
+                <li>Specialized medication packaging</li>
+            </ul>
+
+            <div class="pharmacy-info">
+                <h3>Pharmacy Information</h3>
+                <p>Operating Hours: Monday - Friday, 8:00 AM - 8:00 PM</p>
+                <p>Weekend Hours: Saturday - Sunday, 9:00 AM - 5:00 PM</p>
+                <p>Emergency Services: Available 24/7</p>
+                <p>Contact: +254 700 000 003</p>
+                <p>Email: pharmacy@jokaihospital.com</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .facility-header {
+        background: linear-gradient(rgba(0, 64, 128, 0.8), rgba(0, 64, 128, 0.8)),
+                    url('/static/images/pharmacy_bg.jpg') no-repeat center center;
+        background-size: cover;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .facility-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .facility-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .facility-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .facility-image img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .facility-details h2 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .facility-details h3 {
+        color: var(--primary-color);
+        margin: 1.5rem 0 1rem;
+    }
+
+    .facility-details ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .facility-details li {
+        margin-bottom: 0.5rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .facility-details li:before {
+        content: "•";
+        color: var(--primary-color);
+        position: absolute;
+        left: 0;
+    }
+
+    .pharmacy-info {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 2rem;
+    }
+
+    .pharmacy-info p {
+        margin: 0.5rem 0;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+        .facility-section {
+            grid-template-columns: 1fr;
+        }
+
+        .facility-header h1 {
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %} 

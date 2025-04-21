@@ -1,0 +1,237 @@
+{% extends "public_base.html" %}
+
+{% block title %}About Us - Jokai Hospital{% endblock %}
+
+{% block content %}
+<div class="about-header">
+    <h1>About Jokai Hospital</h1>
+    <p class="subtitle">Delivering Excellence in Healthcare Since 1990</p>
+</div>
+
+<div class="about-content">
+    <section class="about-section">
+        <h2>Our Mission</h2>
+        <p>At Jokai Hospital, we are committed to providing exceptional healthcare services through advanced technology, compassionate care, and continuous innovation. Our mission is to improve the health and well-being of our community by delivering high-quality medical care and promoting preventive healthcare practices.</p>
+    </section>
+
+    <section class="about-section">
+        <h2>Our Vision</h2>
+        <p>To be the leading healthcare provider in the region, recognized for excellence in patient care, medical innovation, and community service. We strive to create a healthier future for all through our commitment to quality, integrity, and patient-centered care.</p>
+    </section>
+
+    <section class="about-section">
+        <h2>Our Values</h2>
+        <div class="values-grid">
+            <div class="value-card">
+                <i class="fas fa-heart"></i>
+                <h3>Compassion</h3>
+                <p>We treat every patient with empathy and understanding.</p>
+            </div>
+            <div class="value-card">
+                <i class="fas fa-star"></i>
+                <h3>Excellence</h3>
+                <p>We maintain the highest standards in medical care and service.</p>
+            </div>
+            <div class="value-card">
+                <i class="fas fa-handshake"></i>
+                <h3>Integrity</h3>
+                <p>We uphold ethical practices and transparency in all our operations.</p>
+            </div>
+            <div class="value-card">
+                <i class="fas fa-users"></i>
+                <h3>Teamwork</h3>
+                <p>We collaborate to provide comprehensive care to our patients.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <h2>Our Facilities</h2>
+        <div class="facilities-grid">
+            <div class="facility-card">
+                <i class="fas fa-procedures"></i>
+                <h3>Modern Operating Rooms</h3>
+                <p>State-of-the-art surgical facilities with advanced equipment.</p>
+            </div>
+            <div class="facility-card">
+                <i class="fas fa-microscope"></i>
+                <h3>Advanced Laboratories</h3>
+                <p>Cutting-edge diagnostic and research facilities.</p>
+            </div>
+            <div class="facility-card">
+                <i class="fas fa-bed"></i>
+                <h3>Comfortable Wards</h3>
+                <p>Patient-friendly rooms with modern amenities.</p>
+            </div>
+            <div class="facility-card">
+                <i class="fas fa-ambulance"></i>
+                <h3>Emergency Services</h3>
+                <p>24/7 emergency care with rapid response teams.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <h2>Find Us</h2>
+        <div class="map-container">
+            <div class="map-wrapper">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8085677523!2d36.82115931475391!3d-1.2922995999999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d5b5f0c5b5%3A0x5f0c5b5f0c5b5f0c!2sEPZA%20Area!5e0!3m2!1sen!2ske!4v1620000000000!5m2!1sen!2ske"
+                    width="100%"
+                    height="450"
+                    style="border:0;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+            <div class="contact-info">
+                <h3>Contact Information</h3>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>EPZA Area, Athi River, Nairobi, Kenya</p>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <p>+254 700 000 000</p>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <p>info@jokaihospital.com</p>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <p>Open 24/7</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-header {
+        background: linear-gradient(rgba(0, 64, 128, 0.8), rgba(0, 64, 128, 0.8)),
+                    url('/static/images/hospital_bg.svg') no-repeat center center;
+        background-size: cover;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .about-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .about-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .about-section {
+        margin-bottom: 3rem;
+    }
+
+    .about-section h2 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+    }
+
+    .about-section p {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .values-grid, .facilities-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .value-card, .facility-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .value-card:hover, .facility-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .value-card i, .facility-card i {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .value-card h3, .facility-card h3 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .value-card p, .facility-card p {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .map-container {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .contact-info {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .contact-details {
+        margin-top: 1.5rem;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .contact-item i {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+    }
+
+    @media (max-width: 768px) {
+        .about-header h1 {
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+        }
+
+        .map-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %} 

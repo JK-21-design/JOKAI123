@@ -1,0 +1,285 @@
+{% extends "public_base.html" %}
+
+{% block title %}Welcome to Jokai Hospital{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>Welcome to Jokai Hospital</h1>
+        <p class="hero-subtitle">With God all things are possible</p>
+        
+        <div class="auth-container">
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Login</button>
+                <button class="auth-tab" data-tab="register">Register</button>
+            </div>
+
+            <div class="auth-forms">
+                <form method="POST" action="{{ url_for('login') }}" class="auth-form active" id="login-form">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <div class="form-group">
+                        <input type="text" name="username" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" placeholder="Password" required>
+                    </div>
+                    <div class="form-group remember-me">
+                        <div class="remember-me-container">
+                            <input type="checkbox" id="remember" name="remember">
+                            <label for="remember">Remember me</label>
+                        </div>
+                        <a href="{{ url_for('forgot_password') }}" class="forgot-password">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="auth-btn">Login</button>
+                </form>
+
+                <form method="POST" action="{{ url_for('register_user') }}" class="auth-form" id="register-form">
+                    <div class="form-group">
+                        <input type="text" name="full_name" placeholder="Full Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Email Address" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="username" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-preview">
+    <div class="about-content">
+        <h2>About Our Hospital</h2>
+        <p>Jokai Hospital is a leading healthcare provider committed to delivering exceptional medical care through innovation and compassion. Our state-of-the-art facilities and dedicated medical professionals ensure the highest quality of patient care.</p>
+        <a href="{{ url_for('about') }}" class="about-btn">Learn More</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(0, 64, 128, 0.8), rgba(0, 64, 128, 0.8)),
+                    url('/static/images/hospital_bg.svg') no-repeat center center;
+        background-size: cover;
+        padding: 6rem 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .hero-content h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+    }
+
+    .auth-container {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        padding: 2rem;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .auth-tabs {
+        display: flex;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .auth-tab {
+        flex: 1;
+        padding: 1rem;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.1rem;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.3s;
+    }
+
+    .auth-tab.active {
+        opacity: 1;
+        border-bottom: 2px solid white;
+    }
+
+    .auth-form {
+        display: none;
+    }
+
+    .auth-form.active {
+        display: block;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .form-group input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .auth-btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: white;
+        color: var(--primary-color);
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .auth-btn:hover {
+        background: #f0f0f0;
+    }
+
+    .alert {
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .alert-error {
+        background: rgba(220, 53, 69, 0.2);
+        color: white;
+    }
+
+    .alert-success {
+        background: rgba(40, 167, 69, 0.2);
+        color: white;
+    }
+
+    .about-preview {
+        padding: 4rem 2rem;
+        background-color: var(--light-bg);
+        text-align: center;
+    }
+
+    .about-content {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .about-content h2 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .about-content p {
+        color: var(--text-color);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .about-btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+    .about-btn:hover {
+        background: var(--primary-dark);
+    }
+
+    .remember-me-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+    }
+
+    .remember-me {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .remember-me input[type="checkbox"] {
+        margin: 0;
+        width: auto;
+        flex-shrink: 0;
+    }
+
+    .remember-me label {
+        color: white;
+        cursor: pointer;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .forgot-password {
+        color: white;
+        text-decoration: none;
+        opacity: 0.8;
+        transition: opacity 0.3s;
+    }
+
+    .forgot-password:hover {
+        opacity: 1;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.auth-tab');
+        const forms = document.querySelectorAll('.auth-form');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs and forms
+                tabs.forEach(t => t.classList.remove('active'));
+                forms.forEach(f => f.classList.remove('active'));
+
+                // Add active class to clicked tab and corresponding form
+                this.classList.add('active');
+                const formId = this.getAttribute('data-tab') + '-form';
+                document.getElementById(formId).classList.add('active');
+            });
+        });
+    });
+</script>
+{% endblock %} 

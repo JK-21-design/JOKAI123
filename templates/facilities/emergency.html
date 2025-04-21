@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Emergency Services - Jokai Hospital{% endblock %}
+
+{% block content %}
+<div class="facility-header">
+    <h1>Emergency Services</h1>
+    <p class="subtitle">24/7 Emergency Care When You Need It Most</p>
+</div>
+
+<div class="facility-content">
+    <section class="facility-section">
+        <div class="facility-image">
+            <img src="/static/images/emergency.jpg" alt="Emergency Services">
+        </div>
+        
+        <div class="facility-details">
+            <h2>Emergency Department</h2>
+            <p>Our Emergency Department is staffed 24/7 with board-certified emergency physicians, nurses, and support staff ready to provide immediate care for all types of medical emergencies. We are equipped to handle everything from minor injuries to life-threatening conditions.</p>
+            
+            <h3>Emergency Services:</h3>
+            <ul>
+                <li>Trauma Care</li>
+                <li>Cardiac Emergencies</li>
+                <li>Stroke Care</li>
+                <li>Pediatric Emergencies</li>
+                <li>Acute Care</li>
+                <li>Emergency Surgery</li>
+                <li>Critical Care</li>
+            </ul>
+            
+            <h3>Key Features:</h3>
+            <ul>
+                <li>24/7 emergency care</li>
+                <li>Board-certified emergency physicians</li>
+                <li>Advanced life support equipment</li>
+                <li>Dedicated trauma team</li>
+                <li>Fast-track service for minor injuries</li>
+                <li>Direct admission to ICU when needed</li>
+            </ul>
+
+            <div class="emergency-info">
+                <h3>Emergency Department Information</h3>
+                <p>Open 24 hours, 7 days a week</p>
+                <p>No appointment necessary</p>
+                <p>Emergency Contact: +254 700 000 000</p>
+                <p>Ambulance Service: +254 700 000 001</p>
+                <p>Average wait time: Less than 15 minutes</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .facility-header {
+        background: linear-gradient(rgba(0, 64, 128, 0.8), rgba(0, 64, 128, 0.8)),
+                    url('/static/images/emergency_bg.jpg') no-repeat center center;
+        background-size: cover;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .facility-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .facility-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .facility-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .facility-image img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .facility-details h2 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .facility-details h3 {
+        color: var(--primary-color);
+        margin: 1.5rem 0 1rem;
+    }
+
+    .facility-details ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .facility-details li {
+        margin-bottom: 0.5rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .facility-details li:before {
+        content: "•";
+        color: var(--primary-color);
+        position: absolute;
+        left: 0;
+    }
+
+    .emergency-info {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 2rem;
+    }
+
+    .emergency-info p {
+        margin: 0.5rem 0;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+        .facility-section {
+            grid-template-columns: 1fr;
+        }
+
+        .facility-header h1 {
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %} 

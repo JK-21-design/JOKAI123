@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Jokai Hospital{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --primary-dark: #1a252f;
+            --secondary-color: #3498db;
+            --secondary-dark: #2980b9;
+            --light-bg: #f8f9fa;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            padding: 0.5rem;
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+
+        .hospital-name {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .main-content {
+            min-height: calc(100vh - 200px);
+            padding: 2rem;
+        }
+
+        .footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--secondary-color);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-icon {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .social-icon:hover {
+            color: var(--secondary-color);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="logo">JK</div>
+            <div class="hospital-name">JOKAI NATIONAL HOSPITAL</div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: info@jokaihospital.com</p>
+                <p>Phone: +254 700 000 000</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#" class="social-icon">Facebook</a>
+                    <a href="#" class="social-icon">Twitter</a>
+                    <a href="#" class="social-icon">LinkedIn</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="{{ url_for('about') }}">About Us</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Jokai National Hospital. All rights reserved.</p>
+        </div>
+    </footer>
+
+    {% block extra_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.auth-tab');
+            const forms = document.querySelectorAll('.auth-form');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs and forms
+                    tabs.forEach(t => t.classList.remove('active'));
+                    forms.forEach(f => f.classList.remove('active'));
+
+                    // Add active class to clicked tab and corresponding form
+                    this.classList.add('active');
+                    const formId = this.getAttribute('data-tab') + '-form';
+                    document.getElementById(formId).classList.add('active');
+                });
+            });
+        });
+    </script>
+    {% endblock %}
+</body>
+</html> 

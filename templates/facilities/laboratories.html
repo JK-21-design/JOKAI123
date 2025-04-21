@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Advanced Laboratories - Jokai Hospital{% endblock %}
+
+{% block content %}
+<div class="facility-header">
+    <h1>Advanced Laboratories</h1>
+    <p class="subtitle">Cutting-edge diagnostic and research facilities</p>
+</div>
+
+<div class="facility-content">
+    <section class="facility-section">
+        <div class="facility-image">
+            <img src="/static/images/laboratory.jpg" alt="Advanced Laboratory">
+        </div>
+        
+        <div class="facility-details">
+            <h2>State-of-the-Art Diagnostic Facilities</h2>
+            <p>Our laboratories are equipped with the latest diagnostic technology and staffed by highly trained professionals. We provide comprehensive testing services with rapid turnaround times and accurate results.</p>
+            
+            <h3>Laboratory Services:</h3>
+            <ul>
+                <li>Clinical Chemistry</li>
+                <li>Hematology</li>
+                <li>Microbiology</li>
+                <li>Pathology</li>
+                <li>Molecular Diagnostics</li>
+            </ul>
+            
+            <h3>Advanced Equipment:</h3>
+            <ul>
+                <li>Automated analyzers</li>
+                <li>PCR machines</li>
+                <li>Flow cytometers</li>
+                <li>Mass spectrometers</li>
+                <li>Digital microscopy systems</li>
+            </ul>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .facility-header {
+        background: linear-gradient(rgba(0, 64, 128, 0.8), rgba(0, 64, 128, 0.8)),
+                    url('/static/images/laboratory_bg.jpg') no-repeat center center;
+        background-size: cover;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .facility-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .facility-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .facility-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .facility-image img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .facility-details h2 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .facility-details h3 {
+        color: var(--primary-color);
+        margin: 1.5rem 0 1rem;
+    }
+
+    .facility-details ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .facility-details li {
+        margin-bottom: 0.5rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .facility-details li:before {
+        content: "•";
+        color: var(--primary-color);
+        position: absolute;
+        left: 0;
+    }
+
+    @media (max-width: 768px) {
+        .facility-section {
+            grid-template-columns: 1fr;
+        }
+
+        .facility-header h1 {
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %} 

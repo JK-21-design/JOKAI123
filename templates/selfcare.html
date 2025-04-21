@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Self-Care - Jokai Hospital{% endblock %}
+
+{% block content %}
+<div class="selfcare-container">
+    <div class="selfcare-header">
+        <h1>Self-Care Portal</h1>
+        <p class="subtitle">Take control of your health journey</p>
+    </div>
+
+    <div class="features-grid">
+        <!-- Patient Monitoring Section -->
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-heartbeat"></i>
+            </div>
+            <h2>Patient Monitoring</h2>
+            <p>Track and monitor your vital signs and health metrics</p>
+            <div class="feature-actions">
+                <a href="{{ url_for('submit_reading') }}" class="action-button">
+                    <i class="fas fa-plus-circle"></i>
+                    Submit Reading
+                </a>
+                <a href="{{ url_for('view_all_readings') }}" class="action-button">
+                    <i class="fas fa-chart-line"></i>
+                    View History
+                </a>
+            </div>
+        </div>
+
+        <!-- Data Analytics Section -->
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <h2>Data Analytics</h2>
+            <p>Analyze your health trends and patterns</p>
+            <div class="feature-actions">
+                <a href="{{ url_for('dashboard') }}" class="action-button">
+                    <i class="fas fa-tachometer-alt"></i>
+                    View Dashboard
+                </a>
+                <a href="{{ url_for('list_patients') }}" class="action-button">
+                    <i class="fas fa-users"></i>
+                    Patient List
+                </a>
+            </div>
+        </div>
+
+        <!-- Professional Care Section -->
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <h2>Professional Care</h2>
+            <p>Connect with healthcare professionals</p>
+            <div class="feature-actions">
+                <a href="{{ url_for('profile') }}" class="action-button">
+                    <i class="fas fa-user-cog"></i>
+                    My Profile
+                </a>
+                <a href="{{ url_for('contact') }}" class="action-button">
+                    <i class="fas fa-envelope"></i>
+                    Contact Support
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .selfcare-container {
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .selfcare-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .selfcare-header h1 {
+        color: var(--primary-color);
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .subtitle {
+        color: #666;
+        font-size: 1.2rem;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .feature-card h2 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+        color: #666;
+        margin-bottom: 1.5rem;
+    }
+
+    .feature-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .action-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .action-button:hover {
+        background: var(--secondary-color);
+    }
+
+    @media (max-width: 768px) {
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %} 

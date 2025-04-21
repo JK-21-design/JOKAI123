@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card profile-card">
+        <h1 class="section-title">Your Profile</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="grid grid-2">
+            <div class="profile-form-section">
+                <form id="profileForm" action="{{ url_for('update_profile') }}" method="post" class="form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" value="{{ user.username }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="full_name">Full Name</label>
+                        <input type="text" class="form-control" id="full_name" name="full_name" value="{{ user.full_name or '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email or '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <input type="text" class="form-control" id="department" name="department" value="{{ user.department or '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Role</label>
+                        <input type="text" class="form-control" id="role" name="role" value="{{ user.role or '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="shift_start">Shift Start Time</label>
+                        <input type="time" class="form-control" id="shift_start" name="shift_start" value="{{ user.shift_start or '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="shift_end">Shift End Time</label>
+                        <input type="time" class="form-control" id="shift_end" name="shift_end" value="{{ user.shift_end or '' }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </div>
+
+            <div class="profile-info-section">
+                <div class="card shift-info">
+                    <h2 class="section-title">Current Shift Information</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Sign In Time:</span>
+                            <span class="info-value">
+                                {% if user.sign_in_time %}
+                                    {{ user.sign_in_time.strftime('%Y-%m-%d %H:%M:%S') }}
+                                {% else %}
+                                    Not signed in
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Last Sign Out:</span>
+                            <span class="info-value">
+                                {% if user.sign_out_time %}
+                                    {{ user.sign_out_time.strftime('%Y-%m-%d %H:%M:%S') }}
+                                {% else %}
+                                    Currently active
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Patients Seen Today:</span>
+                            <span class="info-value">{{ user.patients_seen or 0 }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card password-section">
+                    <h2 class="section-title">Change Password</h2>
+                    <form id="passwordForm" action="{{ url_for('change_password') }}" method="post" class="form">
+                        <div class="form-group">
+                            <label for="current_password">Current Password</label>
+                            <input type="password" class="form-control" id="current_password" name="current_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new_password">New Password</label>
+                            <input type="password" class="form-control" id="new_password" name="new_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm_password">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-card {
+        margin-top: 2rem;
+    }
+
+    .profile-form-section,
+    .profile-info-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .info-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .info-label {
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    .info-value {
+        color: var(--primary-color);
+    }
+
+    .password-section {
+        margin-top: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .profile-card {
+            margin-top: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle profile form submission
+    const profileForm = document.getElementById('profileForm');
+    profileForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Clear all input fields except username
+                const inputs = profileForm.querySelectorAll('input:not([readonly])');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success';
+                alertDiv.textContent = 'Profile updated successfully!';
+                profileForm.insertBefore(alertDiv, profileForm.firstChild);
+                
+                // Remove success message after 3 seconds
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 3000);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    // Handle password form submission
+    const passwordForm = document.getElementById('passwordForm');
+    passwordForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Clear password fields
+                const inputs = passwordForm.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success';
+                alertDiv.textContent = 'Password changed successfully!';
+                passwordForm.insertBefore(alertDiv, passwordForm.firstChild);
+                
+                // Remove success message after 3 seconds
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 3000);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+});
+</script>
+{% endblock %} 

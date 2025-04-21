@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e9ecef;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Medical icon patterns -->
+    <pattern id="medPattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+      <!-- Hospital Cross -->
+      <path d="M40,45 h20 v-20 h10 v20 h20 v10 h-20 v20 h-10 v-20 h-20 z" 
+            fill="#004080" fill-opacity="0.03"/>
+      
+      <!-- Arrow -->
+      <path d="M85,50 l10,-10 v5 h15 v10 h-15 v5 z" 
+            fill="#E31837" fill-opacity="0.03"/>
+            
+      <!-- Simplified Hospital Building -->
+      <path d="M15,70 h15 v-25 h10 v25 h15 v10 h-40 z" 
+            fill="#004080" fill-opacity="0.02"/>
+    </pattern>
+  </defs>
+  
+  <!-- Main background -->
+  <rect width="100%" height="100%" fill="url(#bg-gradient)"/>
+  
+  <!-- Pattern overlay -->
+  <rect width="100%" height="100%" fill="url(#medPattern)"/>
+  
+  <!-- Top decorative wave -->
+  <path d="M0,100 Q300,50 600,100 Q900,150 1200,100 L1200,0 L0,0 Z" 
+        fill="#004080" fill-opacity="0.02"/>
+  
+  <!-- Bottom decorative wave -->
+  <path d="M0,700 Q300,750 600,700 Q900,650 1200,700 L1200,800 L0,800 Z" 
+        fill="#004080" fill-opacity="0.02"/>
+</svg> 

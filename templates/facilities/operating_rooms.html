@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Modern Operating Rooms - Jokai Hospital{% endblock %}
+
+{% block content %}
+<div class="facility-header">
+    <h1>Modern Operating Rooms</h1>
+    <p class="subtitle">State-of-the-art surgical facilities</p>
+</div>
+
+<div class="facility-content">
+    <section class="facility-section">
+        <div class="facility-image">
+            <img src="/static/images/operating_room.jpg" alt="Modern Operating Room">
+        </div>
+        
+        <div class="facility-details">
+            <h2>Advanced Surgical Facilities</h2>
+            <p>Our operating rooms are equipped with the latest technology and designed to provide the highest level of surgical care. We maintain strict sterilization protocols and utilize cutting-edge equipment to ensure patient safety and optimal surgical outcomes.</p>
+            
+            <h3>Key Features:</h3>
+            <ul>
+                <li>Advanced surgical navigation systems</li>
+                <li>High-definition laparoscopic equipment</li>
+                <li>Integrated operating room technology</li>
+                <li>State-of-the-art anesthesia delivery systems</li>
+                <li>Real-time monitoring capabilities</li>
+            </ul>
+            
+            <h3>Specialized Operating Suites:</h3>
+            <ul>
+                <li>Cardiac Surgery Suite</li>
+                <li>Neurosurgery Suite</li>
+                <li>Orthopedic Surgery Suite</li>
+                <li>Minimally Invasive Surgery Suite</li>
+                <li>Emergency Trauma Suite</li>
+            </ul>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .facility-header {
+        background: linear-gradient(rgba(0, 64, 128, 0.8), rgba(0, 64, 128, 0.8)),
+                    url('/static/images/operating_room_bg.jpg') no-repeat center center;
+        background-size: cover;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .facility-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .facility-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .facility-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .facility-image img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .facility-details h2 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .facility-details h3 {
+        color: var(--primary-color);
+        margin: 1.5rem 0 1rem;
+    }
+
+    .facility-details ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .facility-details li {
+        margin-bottom: 0.5rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .facility-details li:before {
+        content: "•";
+        color: var(--primary-color);
+        position: absolute;
+        left: 0;
+    }
+
+    @media (max-width: 768px) {
+        .facility-section {
+            grid-template-columns: 1fr;
+        }
+
+        .facility-header h1 {
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %} 
