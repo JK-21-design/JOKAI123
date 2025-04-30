@@ -456,7 +456,9 @@ def dashboard():
 
 @app.route('/register-patient', methods=['GET', 'POST'])
 @login_required
-def register_patient():
+@app.route('/new_patient', methods=['GET', 'POST'])
+@login_required
+def new_patient():
     if request.method == 'POST':
         name = request.form.get('name')
         device_id = request.form.get('device_id')
@@ -477,13 +479,13 @@ def register_patient():
         existing_device = Patient.query.filter_by(device_id=device_id).first()
         if existing_device:
             flash('Device ID already registered', 'error')
-            return redirect(url_for('register_patient'))
+            return redirect(url_for('new_patient'))
 
         # Check if ID number already exists
         existing_id = Patient.query.filter_by(id_number=id_number).first()
         if existing_id:
             flash('ID number already registered', 'error')
-            return redirect(url_for('register_patient'))
+            return redirect(url_for('new_patient'))
 
         # Create new patient
         new_patient = Patient(
@@ -511,7 +513,7 @@ def register_patient():
         except Exception as e:
             db.session.rollback()
             flash('Error registering patient. Please try again.', 'error')
-            return redirect(url_for('register_patient'))
+            return redirect(url_for('new_patient'))
 
     return render_template('register.html')
 
