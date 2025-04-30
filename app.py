@@ -263,11 +263,8 @@ def view_readings(device_id):
 @app.route('/patients')
 @login_required
 def list_patients():
-    if current_user.role != 'doctor':
-        flash('Only doctors can view the patient list', 'error')
-        return redirect(url_for('index'))
     patients = Patient.query.all()
-    return jsonify([{ 'name': p.name, 'device_id': p.device_id } for p in patients])
+    return render_template('list_patients.html', patients=patients)
 
 @app.route('/readings')
 @login_required
