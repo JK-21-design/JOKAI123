@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Patient - JOKAI Hospital{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header-section">
+        <h1>Add New Patient</h1>
+        <a href="{{ url_for('list_patients') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Patient List
+        </a>
+    </div>
+
+    <div class="form-container">
+        <form method="POST" class="patient-form">
+            <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" required class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="device_id">Device ID *</label>
+                <input type="text" id="device_id" name="device_id" required class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="id_number">ID Number *</label>
+                <input type="text" id="id_number" name="id_number" required class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="date_of_birth">Date of Birth *</label>
+                <input type="date" id="date_of_birth" name="date_of_birth" required class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender *</label>
+                <select id="gender" name="gender" required class="form-control">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input type="tel" id="phone" name="phone" required class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address *</label>
+                <textarea id="address" name="address" required class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="blood_type">Blood Type *</label>
+                <select id="blood_type" name="blood_type" required class="form-control">
+                    <option value="">Select Blood Type</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="allergies">Allergies</label>
+                <textarea id="allergies" name="allergies" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="medical_conditions">Medical Conditions</label>
+                <textarea id="medical_conditions" name="medical_conditions" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="emergency_contact">Emergency Contact Name *</label>
+                <input type="text" id="emergency_contact" name="emergency_contact" required class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="emergency_phone">Emergency Contact Phone *</label>
+                <input type="tel" id="emergency_phone" name="emergency_phone" required class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="relationship">Relationship to Emergency Contact *</label>
+                <input type="text" id="relationship" name="relationship" required class="form-control">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Patient
+                </button>
+                <button type="reset" class="btn btn-secondary">
+                    <i class="fas fa-undo"></i> Reset Form
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.form-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--light-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--dark-color);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.2);
+}
+
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* Required field indicator */
+label[for]:after {
+    content: " *";
+    color: red;
+}
+
+label[for="email"]:after,
+label[for="allergies"]:after,
+label[for="medical_conditions"]:after {
+    content: "";
+}
+</style>
+{% endblock %}

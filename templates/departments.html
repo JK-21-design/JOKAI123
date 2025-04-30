@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Departments - Jokai Hospital{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header-section">
+        <h1>Hospital Departments</h1>
+        <p class="subtitle">Manage and view all hospital departments</p>
+    </div>
+
+    <div class="departments-grid">
+        {% for department in departments %}
+        <div class="department-card">
+            <div class="department-header">
+                <h2>{{ department.name }}</h2>
+                <span class="department-status {% if department.head %}active{% else %}inactive{% endif %}">
+                    {% if department.head %}Active{% else %}No Head Assigned{% endif %}
+                </span>
+            </div>
+            <div class="department-info">
+                <p>{{ department.description }}</p>
+                <div class="department-stats">
+                    <div class="stat">
+                        <i class="fas fa-users"></i>
+                        <span>{{ department.staff|length }} Staff</span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-calendar"></i>
+                        <span>Est. {{ department.created_at.strftime('%Y') }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="department-actions">
+                <a href="{{ url_for('department_detail', dept_id=department.id) }}" class="btn btn-primary">
+                    <i class="fas fa-info-circle"></i>
+                    View Details
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.header-section h1 {
+    color: #004080;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 1.2rem;
+}
+
+.departments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.department-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.department-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.department-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.department-header h2 {
+    color: #004080;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.department-status {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+}
+
+.department-status.active {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.department-status.inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.department-info {
+    margin-bottom: 20px;
+}
+
+.department-info p {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.department-stats {
+    display: flex;
+    gap: 20px;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #666;
+}
+
+.stat i {
+    color: #004080;
+}
+
+.department-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #004080;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #003366;
+}
+
+@media (max-width: 768px) {
+    .departments-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %} 

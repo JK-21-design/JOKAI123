@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 from pytz import timezone
 import random
 from werkzeug.routing.exceptions import BuildError
+from werkzeug.utils import secure_filename
 
 # Load environment variables from .env file
 load_dotenv()
@@ -21,6 +22,15 @@ app = Flask(__name__)
 app.config['DEBUG'] = os.environ.get('FLASK_ENV') != 'production'
 CORS(app)
 app.secret_key = os.environ.get('SECRET_KEY', 'secret-key')
+
+# Add these configurations after the existing app configurations
+UPLOAD_FOLDER = 'static/profile_pictures'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.errorhandler(BuildError)
 def handle_build_error(error):
@@ -97,18 +107,39 @@ def evaluate_status(systolic, diastolic):
 
 @app.route('/')
 def index():
-    total_patients = Patient.query.count()
-    total_readings = HealthReading.query.count()
-    abnormal_readings = HealthReading.query.filter(HealthReading.status != 'normal').count()
-    
-    return render_template('index.html', 
-                         hospital_name="JOKAI Hospital",
-                         total_patients=total_patients,
-                         total_readings=total_readings,
-                         abnormal_readings=abnormal_readings)
+    if current_user.is_authenticated:
+        try:
+            total_patients = Patient.query.count()
+            total_readings = HealthReading.query.count()
+            abnormal_readings = HealthReading.query.filter(HealthReading.status != 'normal').count()
+            recent_activity = HealthReading.query.order_by(HealthReading.timestamp.desc()).limit(5).all()
+            
+            return render_template('index.html',
+                                total_patients=total_patients,
+                                total_readings=total_readings,
+                                abnormal_readings=abnormal_readings,
+                                recent_activity=recent_activity,
+                                emergency_readings=[],  # Add empty list for emergency readings
+                                today_appointments=[])  # Add empty list for appointments
+        except Exception as e:
+            flash('Error loading dashboard data', 'error')
+            return render_template('index.html',
+                                total_patients=0,
+                                total_readings=0,
+                                abnormal_readings=0,
+                                recent_activity=[],
+                                emergency_readings=[],
+                                today_appointments=[])
+    return render_template('public_home.html')
 
 @app.route('/about')
 def about():
+    if current_user.is_authenticated:
+        return render_template('about.html')
+    return render_template('public_about.html')
+
+@app.route('/public-about')
+def public_about():
     return render_template('public_about.html')
 
 @app.route('/register-user', methods=['GET', 'POST'])
@@ -139,21 +170,21 @@ def register_user():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+        
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        remember = request.form.get('remember')
+        remember = request.form.get('remember', False)
 
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user, remember=remember)
             flash('Login successful!', 'success')
             return redirect(url_for('index'))
-        
         flash('Invalid username or password', 'error')
-        return redirect(url_for('login'))
-    
-    return render_template('public_home.html')
+    return render_template('login.html')
 
 @app.route('/logout')
 @login_required
@@ -232,11 +263,15 @@ def view_readings(device_id):
 @app.route('/patients')
 @login_required
 def list_patients():
+    if current_user.role != 'doctor':
+        flash('Only doctors can view the patient list', 'error')
+        return redirect(url_for('index'))
     patients = Patient.query.all()
     return jsonify([{ 'name': p.name, 'device_id': p.device_id } for p in patients])
 
 @app.route('/readings')
 @login_required
+@cache.memoize(timeout=30)  # Cache for 30 seconds
 def view_all_readings():
     patients = Patient.query.all()
     all_data = []
@@ -305,7 +340,7 @@ def patient_profile(patient_id):
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html')
+    return render_template('profile.html', user=current_user)
 
 @app.route('/profile/update', methods=['POST'])
 @login_required
@@ -381,25 +416,28 @@ def reset_password(token):
         user = User.query.filter_by(email=email).first()
         if user:
             user.set_password(request.form.get('password'))
-            db.session.commit()
-            flash('Your password has been updated', 'success')
-            return redirect(url_for('public_home'))
-    return render_template('reset_password.html', token=token)
-
-@app.route('/dashboard')
 @login_required
 def dashboard():
     total_patients = Patient.query.count()
     total_readings = HealthReading.query.count()
-    abnormal_readings = HealthReading.query.filter(HealthReading.status != 'normal').count()
+    emergency_count = HealthReading.query.filter(
+        (HealthReading.systolic >= 140) | (HealthReading.diastolic >= 90)
+    ).count()
     
     recent_activity = HealthReading.query.order_by(HealthReading.timestamp.desc()).limit(5).all()
+    
+    # Get ESP32 devices and their connection status
+    esp32_devices = [{
+        'device_id': device_id,
+        'is_connected': (datetime.utcnow() - ESP32_CONNECTIONS[device_id]).total_seconds() < 10 if device_id in ESP32_CONNECTIONS else False
+    } for device_id in ESP32_API_KEYS.keys()]
     
     return render_template('dashboard.html',
                          total_patients=total_patients,
                          total_readings=total_readings,
-                         abnormal_readings=abnormal_readings,
-                         recent_activity=recent_activity)
+                         emergency_count=emergency_count,
+                         recent_activity=recent_activity,
+                         esp32_devices=esp32_devices)
 
 @app.route('/register-patient', methods=['GET', 'POST'])
 @login_required
@@ -503,6 +541,9 @@ def contact():
 @app.route('/professional_features')
 @login_required
 def professional_features():
+    if current_user.role != 'doctor':
+        flash('Only doctors can access professional features', 'error')
+        return redirect(url_for('index'))
     return render_template('professional_features.html')
 
 @app.route('/api/esp32/reading', methods=['POST'])
@@ -748,6 +789,11 @@ def reset_readings():
             'message': f'Error resetting readings: {str(e)}'
         }), 500
 
+@app.route('/esp32-management')
+@login_required
+def esp32_management():
+    return render_template('esp32_management.html')
+
 @app.route('/api/esp32/connect', methods=['POST'])
 def esp32_connect():
     try:
@@ -798,6 +844,42 @@ def esp32_disconnect():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/upload-profile-picture', methods=['POST'])
+@login_required
+def upload_profile_picture():
+    if 'profile_picture' not in request.files:
+        flash('No file selected', 'error')
+        return redirect(url_for('profile'))
+    
+    file = request.files['profile_picture']
+    if file.filename == '':
+        flash('No file selected', 'error')
+        return redirect(url_for('profile'))
+    
+    if file and allowed_file(file.filename):
+        # Create upload folder if it doesn't exist
+        if not os.path.exists(app.config['UPLOAD_FOLDER']):
+            os.makedirs(app.config['UPLOAD_FOLDER'])
+        
+        # Secure the filename and add timestamp to make it unique
+        filename = secure_filename(file.filename)
+        timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
+        filename = f"{timestamp}_{filename}"
+        
+        # Save the file
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+        
+        # Update user's profile picture
+        current_user.profile_picture = filename
+        db.session.commit()
+        
+        flash('Profile picture updated successfully', 'success')
+    else:
+        flash('Invalid file type. Allowed types: png, jpg, jpeg, gif', 'error')
+    
+    return redirect(url_for('profile'))
 
 if __name__ == '__main__':
     with app.app_context():

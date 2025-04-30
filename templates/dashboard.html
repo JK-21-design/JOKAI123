@@ -6,8 +6,115 @@
 <div class="dashboard-container">
     <!-- Welcome Section -->
     <div class="welcome-section">
-        <h1>Welcome, {{ current_user.username }}</h1>
-        <p class="subtitle">Hospital Management Dashboard</p>
+        <div class="welcome-header">
+            <div>
+                <h1>Welcome, {{ current_user.username }}</h1>
+                <p class="subtitle">Hospital Management Dashboard</p>
+            </div>
+            <a href="{{ url_for('logout') }}" class="dashboard-logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Hospital Details -->
+    <div class="hospital-details">
+        <h2>Hospital Overview</h2>
+        <div class="details-grid">
+            <div class="detail-card">
+                <h3><i class="fas fa-building"></i> Infrastructure</h3>
+                <ul>
+                    <li>500+ Patient Beds</li>
+                    <li>50 ICU Units</li>
+                    <li>20 Operation Theaters</li>
+                    <li>24/7 Pharmacy</li>
+                    <li>Advanced Diagnostic Center</li>
+                </ul>
+            </div>
+            <div class="detail-card">
+                <h3><i class="fas fa-user-md"></i> Medical Staff</h3>
+                <ul>
+                    <li>200+ Doctors</li>
+                    <li>500+ Nurses</li>
+                    <li>100+ Specialists</li>
+                    <li>50+ Departments</li>
+                    <li>24/7 Emergency Team</li>
+                </ul>
+            </div>
+            <div class="detail-card">
+                <h3><i class="fas fa-certificate"></i> Accreditations</h3>
+                <ul>
+                    <li>ISO 9001:2015 Certified</li>
+                    <li>JCI Accredited</li>
+                    <li>NABH Certified</li>
+                    <li>Green Hospital Initiative</li>
+                    <li>Patient Safety Certified</li>
+                </ul>
+            </div>
+            <div class="detail-card">
+                <h3><i class="fas fa-hand-holding-heart"></i> Patient Services</h3>
+                <ul>
+                    <li>Insurance Support</li>
+                    <li>International Patient Care</li>
+                    <li>Ambulance Services</li>
+                    <li>Online Consultations</li>
+                    <li>Home Healthcare</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Appointments -->
+    <div class="appointments-section">
+        <div class="section-header">
+            <h2><i class="fas fa-calendar-day"></i> Today's Appointments</h2>
+            <a href="{{ url_for('new_appointment') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> New Appointment
+            </a>
+        </div>
+        <div class="table-responsive">
+            <table class="appointments-table">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Patient Name</th>
+                        <th>Doctor</th>
+                        <th>Department</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in today_appointments %}
+                    <tr>
+                        <td>{{ appointment.time.strftime('%H:%M') }}</td>
+                        <td>{{ appointment.patient_name }}</td>
+                        <td>Dr. {{ appointment.doctor_name }}</td>
+                        <td>{{ appointment.department }}</td>
+                        <td>
+                            <span class="badge badge-{{ appointment.type|lower }}">{{ appointment.type }}</span>
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ appointment.status|lower }}">{{ appointment.status }}</span>
+                        </td>
+                        <td class="actions">
+                            <a href="{{ url_for('view_appointment', id=appointment.id) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('edit_appointment', id=appointment.id) }}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">No appointments scheduled for today</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Statistics Cards -->
@@ -35,41 +142,13 @@
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
             <div class="stat-content">
-                <h3>{{ abnormal_readings }}</h3>
-                <p>Abnormal Readings</p>
+                <h3>{{ emergency_count }}</h3>
+                <p>Emergency Cases</p>
             </div>
         </div>
     </div>
 
-    <!-- Recent Activity Section -->
-    <div class="recent-activity-section">
-        <h2>Recent Activity</h2>
-        <div class="activity-list">
-            {% for reading in recent_activity %}
-            <div class="activity-card">
-                <div class="activity-icon">
-                    {% if reading.systolic > 140 or reading.diastolic > 90 %}
-                        <i class="fas fa-exclamation-circle text-danger"></i>
-                    {% else %}
-                        <i class="fas fa-check-circle text-success"></i>
-                    {% endif %}
-                </div>
-                <div class="activity-details">
-                    <h4>{{ reading.patient.name }}</h4>
-                    <p>BP: {{ reading.systolic }}/{{ reading.diastolic }} mmHg</p>
-                    <span class="activity-time">{{ reading.timestamp.strftime('%Y-%m-%d %H:%M') }}</span>
-                </div>
-                <div class="activity-status">
-                    {% if reading.systolic > 140 or reading.diastolic > 90 %}
-                        <span class="badge badge-danger">Abnormal</span>
-                    {% else %}
-                        <span class="badge badge-success">Normal</span>
-                    {% endif %}
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
+
 </div>
 {% endblock %}
 
@@ -81,19 +160,318 @@
         padding: 2rem;
     }
 
+    /* Hospital Details Styles */
+    .hospital-details {
+        margin: 2rem 0;
+    }
+
+    .hospital-details h2 {
+        color: #004080;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .detail-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .detail-card h3 {
+        color: #004080;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .detail-card ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .detail-card li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #eee;
+        color: #444;
+    }
+
+    .detail-card li:last-child {
+        border-bottom: none;
+    }
+
+    /* Appointments Table Styles */
+    .appointments-section {
+        margin: 2rem 0;
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-header h2 {
+        color: #004080;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .appointments-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    .appointments-table th {
+        background-color: #f8f9fa;
+        color: #004080;
+        font-weight: 600;
+    }
+
+    .appointments-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .badge-consultation {
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .badge-emergency {
+        background-color: #fce4ec;
+        color: #c2185b;
+    }
+
+    .badge-scheduled {
+        background-color: #e8f5e9;
+        color: #388e3c;
+    }
+
+    .badge-completed {
+        background-color: #e8f5e9;
+        color: #388e3c;
+    }
+
+    .badge-pending {
+        background-color: #fff3e0;
+        color: #f57c00;
+    }
+
+    .badge-cancelled {
+        background-color: #fbe9e7;
+        color: #d84315;
+    }
+
+    .actions {
+        white-space: nowrap;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        border-radius: 4px;
+        margin-right: 0.25rem;
+    }
+
+    .btn-info {
+        background-color: #03a9f4;
+        color: white;
+    }
+
+    .btn-warning {
+        background-color: #ffa726;
+        color: white;
+    }
+
+    .dashboard-container {
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
     .welcome-section {
-        text-align: center;
+        text-align: left;
+        margin-bottom: 2rem;
+    }
+
+    .hospital-info {
         margin-bottom: 3rem;
     }
 
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .info-card {
+        background: linear-gradient(135deg, #ffffff, #f8f9fa);
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        border: 1px solid rgba(0, 64, 128, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .info-icon {
+        background: linear-gradient(135deg, #004080, #0066cc);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .info-content {
+        flex: 1;
+    }
+
+    .info-content h3 {
+        color: #004080;
+        margin-bottom: 0.8rem;
+        font-size: 1.2rem;
+    }
+
+    .info-content p {
+        color: #555;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    .hours-list, .contact-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .hours-list li, .contact-list li {
+        color: #555;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .hours-list li span {
+        font-weight: 600;
+        color: #004080;
+        min-width: 100px;
+    }
+
+    .contact-list li i,
+    .departments-list li i,
+    .services-list li i {
+        color: #004080;
+        width: 20px;
+    }
+
+    .departments-list,
+    .services-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.5rem;
+    }
+
+    .departments-list li,
+    .services-list li {
+        color: #555;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 4px 8px;
+        border-radius: 4px;
+        background: rgba(0, 64, 128, 0.05);
+        font-size: 0.9rem;
+    }
+
+    .welcome-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
     .welcome-section h1 {
-        color: var(--primary-color);
+        color: #004080;
         margin-bottom: 0.5rem;
     }
 
     .subtitle {
-        color: var(--text-color);
+        color: #333;
         opacity: 0.8;
+    }
+
+    .dashboard-logout-btn {
+        padding: 10px 20px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-logout-btn:hover {
+        background-color: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .dashboard-logout-btn i {
+        font-size: 1.2rem;
     }
 
     /* Statistics Grid */
@@ -106,21 +484,21 @@
 
     .stat-card {
         background: white;
-        border-radius: var(--border-radius);
+        border-radius: 8px;
         padding: 1.5rem;
-        box-shadow: var(--box-shadow);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         display: flex;
         align-items: center;
-        transition: var(--transition);
+        transition: all 0.3s ease;
     }
 
     .stat-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
 
     .stat-icon {
-        background: var(--primary-color);
+        background: #004080;
         color: white;
         width: 50px;
         height: 50px;
@@ -137,26 +515,121 @@
 
     .stat-content h3 {
         font-size: 1.8rem;
-        color: var(--primary-color);
+        color: #004080;
         margin: 0;
     }
 
     .stat-content p {
         margin: 0;
-        color: var(--text-color);
+        color: #333;
         opacity: 0.8;
+    }
+
+    /* ESP32 Device Management */
+    .esp32-management {
+        background: white;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 3rem;
+    }
+
+    .esp32-management h2 {
+        color: #004080;
+        margin-bottom: 1.5rem;
+    }
+
+    .device-list {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .device-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .device-item:hover {
+        background: #e9ecef;
+    }
+
+    .device-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .device-info i {
+        font-size: 1.5rem;
+        color: #004080;
+    }
+
+    .device-details p {
+        margin: 0;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .device-status {
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .device-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .connect-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        background-color: #004080;
+        color: white;
+        font-size: 14px;
+    }
+
+    .connect-btn:hover {
+        transform: translateY(-2px);
+        background-color: #0056b3;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .connect-btn i {
+        font-size: 1.2rem;
+    }
+
+    .text-success {
+        color: #28a745;
+    }
+
+    .text-danger {
+        color: #dc3545;
     }
 
     /* Recent Activity Section */
     .recent-activity-section {
         background: white;
-        border-radius: var(--border-radius);
+        border-radius: 8px;
         padding: 2rem;
-        box-shadow: var(--box-shadow);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     .recent-activity-section h2 {
-        color: var(--primary-color);
+        color: #004080;
         margin-bottom: 1.5rem;
     }
 
@@ -170,13 +643,13 @@
         display: flex;
         align-items: center;
         padding: 1rem;
-        background: var(--background-color);
-        border-radius: var(--border-radius);
-        transition: var(--transition);
+        background: #f8f9fa;
+        border-radius: 8px;
+        transition: all 0.3s ease;
     }
 
     .activity-card:hover {
-        background: #f8f9fa;
+        background: #e9ecef;
     }
 
     .activity-icon {
@@ -187,61 +660,46 @@
         font-size: 1.5rem;
     }
 
-    .text-danger {
-        color: var(--danger-color);
-    }
-
-    .text-success {
-        color: var(--success-color);
-    }
-
     .activity-details {
         flex: 1;
     }
 
     .activity-details h4 {
         margin: 0;
-        color: var(--text-color);
+        color: #333;
     }
 
     .activity-details p {
         margin: 0.25rem 0;
-        color: var(--text-color);
+        color: #333;
+        opacity: 0.8;
     }
 
     .activity-time {
-        font-size: 0.875rem;
-        color: var(--text-color);
-        opacity: 0.7;
+        font-size: 0.8rem;
+        color: #333;
+        opacity: 0.6;
     }
 
     .activity-status {
         margin-left: 1rem;
     }
 
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .dashboard-container {
-            padding: 1rem;
-        }
+    .badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
 
-        .stats-grid {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-        }
+    .badge-danger {
+        background-color: #dc3545;
+        color: white;
+    }
 
-        .activity-card {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .activity-icon {
-            margin: 0 0 1rem 0;
-        }
-
-        .activity-status {
-            margin: 1rem 0 0 0;
-        }
+    .badge-success {
+        background-color: #28a745;
+        color: white;
     }
 </style>
-{% endblock %} 
+{% endblock %}

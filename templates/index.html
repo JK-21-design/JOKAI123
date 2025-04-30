@@ -70,10 +70,6 @@
 
     <!-- Randomize Button -->
     <div class="randomize-container">
-        <button id="randomize-btn" class="action-button">
-            <i class="fas fa-microchip"></i>
-            Connect with Hardware
-        </button>
         <button id="reset-readings-btn" class="action-button" style="background-color: #dc3545;">
             <i class="fas fa-trash"></i>
             Reset Old Readings
@@ -103,6 +99,40 @@
         </div>
     </div>
 
+    <!-- ESP32 Device Management -->
+    <div class="esp32-management">
+        <h2 style="color: #004080;">ESP32 Device Management</h2>
+        <div class="device-list">
+            {% for device in esp32_devices %}
+            <div class="device-item">
+                <div class="device-info">
+                    <i class="fas fa-microchip"></i>
+                    <div class="device-details">
+                        <p>Device ID: {{ device.device_id }}</p>
+                        <span class="device-status" id="status-{{ device.device_id }}">
+                            {% if device.is_connected %}
+                            <i class="fas fa-circle text-success"></i> Connected
+                            {% else %}
+                            <i class="fas fa-circle text-danger"></i> Disconnected
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="device-actions">
+                    <button class="action-button connect-btn" data-device-id="{{ device.device_id }}" 
+                            onclick="toggleConnection('{{ device.device_id }}')">
+                        {% if device.is_connected %}
+                        <i class="fas fa-plug"></i> Disconnect
+                        {% else %}
+                        <i class="fas fa-plug"></i> Connect
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
     <!-- Recent Activity -->
     <div class="recent-activity">
         <h2 style="color: #004080;">Recent Activity</h2>
@@ -119,31 +149,35 @@
         </div>
     </div>
 
-    <!-- ESP32 Connection Status -->
-    <div id="esp32-warning" class="warning-banner" style="display: none;">
-        <div class="warning-content">
-            <i class="fas fa-exclamation-triangle"></i>
-            <span>Warning: ESP32 device is not connected. Some features may be unavailable.</span>
+    <!-- Emergency Alerts -->
+    <div class="emergency-alerts">
+        <h2 style="color: #004080;">Emergency Alerts</h2>
+        <div class="alert-list">
+            {% for reading in emergency_readings %}
+            <div class="alert-item">
+                <i class="fas fa-exclamation-circle"></i>
+                <div class="alert-details">
+                    <p>Critical reading for {{ reading.patient.name }}</p>
+                    <span class="alert-time">{{ reading.timestamp.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 
-    <div class="esp32-status">
-        <h2 style="color: #004080;">ESP32 Connection Status</h2>
-        <div class="connection-info">
-            <div class="status-indicator">
-                <span class="status-dot" id="esp32-status-dot"></span>
-                <span id="esp32-status-text">Checking connection...</span>
+    <!-- Today's Appointments -->
+    <div class="appointments">
+        <h2 style="color: #004080;">Today's Appointments</h2>
+        <div class="appointment-list">
+            {% for appointment in today_appointments %}
+            <div class="appointment-item">
+                <i class="fas fa-calendar-check"></i>
+                <div class="appointment-details">
+                    <p>{{ appointment.patient.name }} with Dr. {{ appointment.doctor.full_name }}</p>
+                    <span class="appointment-time">{{ appointment.appointment_date.strftime('%H:%M') }}</span>
+                </div>
             </div>
-            <div class="connection-controls">
-                <button id="connect-esp32" class="action-button">
-                    <i class="fas fa-plug"></i>
-                    Connect ESP32
-                </button>
-                <button id="disconnect-esp32" class="action-button" style="background-color: #dc3545;">
-                    <i class="fas fa-unplug"></i>
-                    Disconnect
-                </button>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
@@ -328,16 +362,6 @@
     font-size: 18px;
 }
 
-#randomize-btn {
-    background-color: #004080;
-}
-
-#randomize-btn:hover {
-    background-color: #005db3;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
 #reset-readings-btn {
     background-color: #dc3545;
 }
@@ -358,7 +382,77 @@
     }
 }
 
-.esp32-status {
+.emergency-alerts {
+    margin-bottom: 40px;
+}
+
+.alert-list {
+    display: grid;
+    gap: 15px;
+}
+
+.alert-item {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-left: 4px solid #dc3545;
+}
+
+.alert-item i {
+    color: #dc3545;
+    font-size: 1.5rem;
+}
+
+.alert-details p {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.alert-time {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.appointments {
+    margin-bottom: 40px;
+}
+
+.appointment-list {
+    display: grid;
+    gap: 15px;
+}
+
+.appointment-item {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-left: 4px solid #28a745;
+}
+
+.appointment-item i {
+    color: #28a745;
+    font-size: 1.5rem;
+}
+
+.appointment-details p {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.appointment-time {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.esp32-management {
     background: rgba(255, 255, 255, 0.9);
     border-radius: 10px;
     padding: 20px;
@@ -366,86 +460,86 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.connection-info {
+.device-list {
+    display: grid;
+    gap: 15px;
+}
+
+.device-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 20px;
-}
-
-.status-indicator {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.status-dot {
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background-color: #6c757d;
-}
-
-.status-dot.connected {
-    background-color: #28a745;
-}
-
-.status-dot.disconnected {
-    background-color: #dc3545;
-}
-
-.connection-controls {
-    display: flex;
-    gap: 10px;
-}
-
-.warning-banner {
-    background-color: #fff3cd;
-    border-left: 4px solid #ffc107;
     padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
 }
 
-.warning-content {
+.device-info {
     display: flex;
     align-items: center;
+    gap: 15px;
+}
+
+.device-info i {
+    font-size: 1.5rem;
+    color: #004080;
+}
+
+.device-details p {
+    margin: 0;
+    font-weight: 500;
+}
+
+.device-status {
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.text-success {
+    color: #28a745;
+}
+
+.text-danger {
+    color: #dc3545;
+}
+
+.device-actions {
+    display: flex;
     gap: 10px;
-    color: #856404;
 }
 
-.warning-content i {
-    font-size: 1.2em;
+.connect-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    background-color: #004080;
+    color: white;
+}
+
+.connect-btn:hover {
+    transform: translateY(-2px);
+    background-color: #0056b3;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.connect-btn i {
+    font-size: 1.2rem;
 }
 </style>
 
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const randomizeBtn = document.getElementById('randomize-btn');
     const resetBtn = document.getElementById('reset-readings-btn');
-    
-    randomizeBtn.addEventListener('click', async function() {
-        try {
-            const response = await fetch('/api/random-stats');
-            if (!response.ok) throw new Error('Network response was not ok');
-            
-            const data = await response.json();
-            
-            // Update statistics cards with animation
-            animateValue('total-readings', parseInt(document.getElementById('total-readings').textContent), data.total_readings, 1000);
-            animateValue('abnormal-readings', parseInt(document.getElementById('abnormal-readings').textContent), data.abnormal_readings, 1000);
-            
-            // Show success message
-            showNotification('Readings updated successfully!', 'success');
-            
-        } catch (error) {
-            console.error('Error:', error);
-            showNotification('Failed to update readings. Please try again.', 'error');
-        }
-    });
     
     resetBtn.addEventListener('click', async function() {
         if (confirm('Are you sure you want to reset all readings? This action cannot be undone.')) {
@@ -536,143 +630,80 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     `;
     document.head.appendChild(style);
-
-    const esp32Warning = document.getElementById('esp32-warning');
-    const esp32StatusDot = document.getElementById('esp32-status-dot');
-    const esp32StatusText = document.getElementById('esp32-status-text');
-    const connectBtn = document.getElementById('connect-esp32');
-    const disconnectBtn = document.getElementById('disconnect-esp32');
-    let statusCheckInterval = null;
-    let disconnectTimeout = null;
-
-    // Check ESP32 connection status
-    async function checkESP32Status() {
-        try {
-            const response = await fetch('/api/esp32/status/device1', {
-                headers: {
-                    'X-API-Key': 'your-secure-api-key-1'
-                }
-            });
-            
-            const data = await response.json();
-            
-            if (response.ok && data.status === 'connected') {
-                esp32StatusDot.className = 'status-dot connected';
-                esp32StatusText.textContent = 'ESP32 Connected';
-                connectBtn.disabled = true;
-                disconnectBtn.disabled = false;
-                esp32Warning.style.display = 'none';
-            } else {
-                esp32StatusDot.className = 'status-dot disconnected';
-                esp32StatusText.textContent = 'ESP32 Disconnected';
-                connectBtn.disabled = false;
-                disconnectBtn.disabled = true;
-                esp32Warning.style.display = 'block';
-                
-                // Clear intervals if device is disconnected
-                if (statusCheckInterval) {
-                    clearInterval(statusCheckInterval);
-                    statusCheckInterval = null;
-                }
-                if (disconnectTimeout) {
-                    clearTimeout(disconnectTimeout);
-                    disconnectTimeout = null;
-                }
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            esp32StatusDot.className = 'status-dot disconnected';
-            esp32StatusText.textContent = 'ESP32 Disconnected';
-            connectBtn.disabled = false;
-            disconnectBtn.disabled = true;
-            esp32Warning.style.display = 'block';
-        }
-    }
-
-    // Connect to ESP32
-    connectBtn.addEventListener('click', async function() {
-        try {
-            const response = await fetch('/api/esp32/connect', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-API-Key': 'your-secure-api-key-1'
-                },
-                body: JSON.stringify({
-                    device_id: 'device1'
-                })
-            });
-            
-            const data = await response.json();
-            
-            if (response.ok) {
-                showNotification('ESP32 connected successfully!', 'success');
-                
-                // Start periodic status check
-                if (!statusCheckInterval) {
-                    statusCheckInterval = setInterval(checkESP32Status, 1000);
-                }
-                
-                // Set timeout for automatic disconnection
-                if (disconnectTimeout) {
-                    clearTimeout(disconnectTimeout);
-                }
-                disconnectTimeout = setTimeout(async () => {
-                    await handleDisconnect();
-                }, data.timeout * 1000);
-                
-                checkESP32Status();
-            } else {
-                throw new Error('Failed to connect to ESP32');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            showNotification('Failed to connect to ESP32. Please try again.', 'error');
-        }
-    });
-
-    // Disconnect from ESP32
-    disconnectBtn.addEventListener('click', handleDisconnect);
-
-    async function handleDisconnect() {
-        try {
-            const response = await fetch('/api/esp32/disconnect', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-API-Key': 'your-secure-api-key-1'
-                },
-                body: JSON.stringify({
-                    device_id: 'device1'
-                })
-            });
-            
-            if (response.ok) {
-                showNotification('ESP32 disconnected successfully!', 'success');
-                
-                // Clear intervals
-                if (statusCheckInterval) {
-                    clearInterval(statusCheckInterval);
-                    statusCheckInterval = null;
-                }
-                if (disconnectTimeout) {
-                    clearTimeout(disconnectTimeout);
-                    disconnectTimeout = null;
-                }
-                
-                checkESP32Status();
-            } else {
-                throw new Error('Failed to disconnect from ESP32');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            showNotification('Failed to disconnect from ESP32. Please try again.', 'error');
-        }
-    }
-
-    // Check status on page load
-    checkESP32Status();
 });
+
+function toggleConnection(deviceId) {
+    const button = document.querySelector(`[data-device-id="${deviceId}"]`);
+    const statusElement = document.getElementById(`status-${deviceId}`);
+    const isConnected = button.innerHTML.includes('Disconnect');
+
+    if (isConnected) {
+        // Disconnect
+        fetch('/api/esp32/disconnect', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-API-Key': 'your-secure-api-key-1' // Replace with actual API key
+            },
+            body: JSON.stringify({ device_id: deviceId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                button.innerHTML = '<i class="fas fa-plug"></i> Connect';
+                statusElement.innerHTML = '<i class="fas fa-circle text-danger"></i> Disconnected';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
+        // Connect
+        fetch('/api/esp32/connect', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-API-Key': 'your-secure-api-key-1' // Replace with actual API key
+            },
+            body: JSON.stringify({ device_id: deviceId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                button.innerHTML = '<i class="fas fa-plug"></i> Disconnect';
+                statusElement.innerHTML = '<i class="fas fa-circle text-success"></i> Connected';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+}
+
+// Poll for device status updates
+function updateDeviceStatus() {
+    const devices = document.querySelectorAll('.device-item');
+    devices.forEach(device => {
+        const deviceId = device.querySelector('.connect-btn').dataset.deviceId;
+        fetch(`/api/esp32/status/${deviceId}`, {
+            headers: {
+                'X-API-Key': 'your-secure-api-key-1' // Replace with actual API key
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const statusElement = document.getElementById(`status-${deviceId}`);
+            const button = device.querySelector('.connect-btn');
+            if (data.status === 'connected') {
+                statusElement.innerHTML = '<i class="fas fa-circle text-success"></i> Connected';
+                button.innerHTML = '<i class="fas fa-plug"></i> Disconnect';
+            } else {
+                statusElement.innerHTML = '<i class="fas fa-circle text-danger"></i> Disconnected';
+                button.innerHTML = '<i class="fas fa-plug"></i> Connect';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+}
+
+// Update status every 5 seconds
+setInterval(updateDeviceStatus, 5000);
 </script>
 {% endblock %}
 {% endblock %}

@@ -4,9 +4,63 @@
 
 {% block content %}
 <div class="container">
+    <!-- Hospital Information Section -->
+    <div class="hospital-info-section">
+        <h2>Hospital Facilities & Services</h2>
+        <div class="facilities-grid">
+            <div class="facility-card">
+                <i class="fas fa-heartbeat"></i>
+                <h3>Emergency Care</h3>
+                <p>24/7 emergency services with state-of-the-art equipment and dedicated staff.</p>
+                <a href="#" class="facility-link">Learn More</a>
+            </div>
+            <div class="facility-card">
+                <i class="fas fa-procedures"></i>
+                <h3>Specialized Units</h3>
+                <p>ICU, CCU, NICU with modern monitoring systems and specialized care.</p>
+                <a href="#" class="facility-link">View Units</a>
+            </div>
+            <div class="facility-card">
+                <i class="fas fa-user-md"></i>
+                <h3>Expert Staff</h3>
+                <p>Experienced doctors, nurses, and healthcare professionals available 24/7.</p>
+                <a href="#" class="facility-link">Meet Our Team</a>
+            </div>
+            <div class="facility-card">
+                <i class="fas fa-flask"></i>
+                <h3>Laboratory Services</h3>
+                <p>Advanced diagnostic lab with quick and accurate test results.</p>
+                <a href="#" class="facility-link">View Services</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="hospital-stats">
+        <div class="stat-card">
+            <i class="fas fa-bed"></i>
+            <h4>500+</h4>
+            <p>Hospital Beds</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-user-md"></i>
+            <h4>200+</h4>
+            <p>Specialists</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-ambulance"></i>
+            <h4>24/7</h4>
+            <p>Emergency Service</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-smile"></i>
+            <h4>98%</h4>
+            <p>Patient Satisfaction</p>
+        </div>
+    </div>
+
     <div class="header-section">
         <h1>Patient List</h1>
-        <a href="{{ url_for('register') }}" class="btn btn-primary">
+        <a href="{{ url_for('new_patient') }}" class="btn btn-primary">
             <i class="fas fa-user-plus"></i> Add New Patient
         </a>
     </div>
@@ -22,12 +76,13 @@
 
     <div class="patients-grid">
         {% for patient in patients %}
-        <a href="{{ url_for('patient_profile', patient_id=patient.id) }}" class="patient-card">
+        <a href="{{ url_for('patient_readings', patient_id=patient.id) }}" class="patient-card">
             <div class="patient-info">
                 <h3>{{ patient.name }}</h3>
-                <p><i class="fas fa-id-card"></i> ID: {{ patient.id }}</p>
+                <p><i class="fas fa-id-card"></i> ID: {{ patient.id_number }}</p>
                 <p><i class="fas fa-phone"></i> {{ patient.phone }}</p>
-                <p><i class="fas fa-envelope"></i> {{ patient.email }}</p>
+                <p><i class="fas fa-envelope"></i> {{ patient.email if patient.email else 'No email' }}</p>
+                <p><i class="fas fa-tint"></i> Blood Type: {{ patient.blood_type }}</p>
             </div>
             <div class="patient-stats">
                 <div class="stat">
@@ -35,8 +90,8 @@
                     <span>{{ patient.readings|length }} readings</span>
                 </div>
                 <div class="stat">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span>{{ patient.abnormal_readings_count }} abnormal</span>
+                    <i class="fas fa-calendar"></i>
+                    <span>{{ patient.date_of_birth.strftime('%Y-%m-%d') }}</span>
                 </div>
             </div>
         </a>
@@ -56,6 +111,133 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+}
+
+.hospital-info-section {
+    margin-bottom: 40px;
+}
+
+.hospital-info-section h2 {
+    color: #1a365d;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.hospital-info-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, #0052cc, #00a3bf);
+    border-radius: 2px;
+}
+
+.facilities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.facility-card {
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 64, 128, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 64, 128, 0.1);
+}
+
+.facility-card:hover {
+    transform: translateY(-5px);
+}
+
+.facility-card i {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #0052cc, #00a3bf);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 15px;
+}
+
+.facility-card h3 {
+    color: #1a365d;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.facility-card p {
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.facility-link {
+    color: #0052cc;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: rgba(0, 82, 204, 0.1);
+    display: inline-block;
+}
+
+.facility-link:hover {
+    background: rgba(0, 82, 204, 0.2);
+    transform: translateY(-2px);
+}
+
+.hospital-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #1a365d, #0052cc);
+    color: white;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(26, 54, 93, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1));
+    pointer-events: none;
+}
+
+.stat-card i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.stat-card h4 {
+    font-size: 1.8rem;
+    margin: 10px 0;
+}
+
+.stat-card p {
+    font-size: 1rem;
+    opacity: 0.9;
 }
 
 .header-section {
