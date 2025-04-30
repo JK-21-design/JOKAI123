@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session, flash
-from models import db, Patient, HealthReading, User
+from models import db, Patient, HealthReading, User, Appointment
 from flask_cors import CORS
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_mail import Mail, Message
@@ -119,8 +119,8 @@ def index():
                                 total_readings=total_readings,
                                 abnormal_readings=abnormal_readings,
                                 recent_activity=recent_activity,
-                                emergency_readings=[],  # Add empty list for emergency readings
-                                today_appointments=[])  # Add empty list for appointments
+                                emergency_readings=[],
+                                today_appointments=[])
         except Exception as e:
             flash('Error loading dashboard data', 'error')
             return render_template('index.html',
@@ -130,6 +130,10 @@ def index():
                                 recent_activity=[],
                                 emergency_readings=[],
                                 today_appointments=[])
+    return render_template('public_home.html')
+
+@app.route('/public-home')
+def public_home():
     return render_template('public_home.html')
 
 @app.route('/about')
@@ -179,19 +183,26 @@ def login():
         remember = request.form.get('remember', False)
 
         user = User.query.filter_by(username=username).first()
-        if user and user.check_password(password):
-            login_user(user, remember=remember)
-            flash('Login successful!', 'success')
-            return redirect(url_for('index'))
-        flash('Invalid username or password', 'error')
+        if not user:
+            flash('Username not found', 'error')
+            return render_template('login.html', username=username)
+        
+        if not user.check_password(password):
+            flash('Incorrect password. Please try again.', 'error')
+            return render_template('login.html', username=username)
+            
+        login_user(user, remember=remember)
+        flash('Login successful!', 'success')
+        return redirect(url_for('index'))
+        
     return render_template('login.html')
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out', 'success')
-    return redirect(url_for('login'))
+    flash('Thank you for using our system. You have been successfully logged out.', 'success')
+    return redirect(url_for('public_home'))
 
 @app.route('/register', methods=['GET', 'POST'])
 @login_required
@@ -413,6 +424,13 @@ def reset_password(token):
         user = User.query.filter_by(email=email).first()
         if user:
             user.set_password(request.form.get('password'))
+            db.session.commit()
+            flash('Password reset successful', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('User not found', 'error')
+            return redirect(url_for('forgot_password'))
+
 @login_required
 def dashboard():
     try:
@@ -454,8 +472,6 @@ def dashboard():
                             recent_activity=[],
                             esp32_devices=[])
 
-@app.route('/register-patient', methods=['GET', 'POST'])
-@login_required
 @app.route('/new_patient', methods=['GET', 'POST'])
 @login_required
 def new_patient():
@@ -925,6 +941,108 @@ def new_appointment():
             flash('Error scheduling appointment. Please try again.', 'error')
 
     return render_template('new_appointment.html')
+
+@app.route('/today-appointments', methods=['GET', 'POST'])
+@login_required
+def today_appointments():
+    if current_user.role != 'doctor':
+        flash('Only doctors can access this page', 'error')
+        return redirect(url_for('index'))
+        
+    if request.method == 'POST':
+        try:
+            patient_name = request.form.get('patient_name')
+            appointment_time = request.form.get('appointment_time')
+            reason = request.form.get('reason')
+            priority = request.form.get('priority')
+            notes = request.form.get('notes')
+            
+            # Create new appointment
+            appointment = Appointment(
+                patient_name=patient_name,
+                appointment_time=datetime.strptime(appointment_time, '%Y-%m-%dT%H:%M'),
+                reason=reason,
+                priority=priority,
+                notes=notes,
+                doctor_id=current_user.id
+            )
+            
+            db.session.add(appointment)
+            db.session.commit()
+            flash('Appointment added successfully!', 'success')
+            return redirect(url_for('today_appointments'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash('Error adding appointment. Please try again.', 'error')
+    
+    # Get today's appointments
+    today = datetime.now().date()
+    appointments = Appointment.query.filter(
+        db.func.date(Appointment.appointment_time) == today
+    ).order_by(Appointment.appointment_time).all()
+    
+    return render_template('today_appointments.html', appointments=appointments)
+
+@app.route('/appointment/<int:appointment_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_appointment(appointment_id):
+    if current_user.role != 'doctor':
+        flash('Only doctors can edit appointments', 'error')
+        return redirect(url_for('index'))
+        
+    appointment = Appointment.query.get_or_404(appointment_id)
+    
+    if request.method == 'POST':
+        try:
+            appointment.patient_name = request.form.get('patient_name')
+            appointment.appointment_time = datetime.strptime(request.form.get('appointment_time'), '%Y-%m-%dT%H:%M')
+            appointment.reason = request.form.get('reason')
+            appointment.priority = request.form.get('priority')
+            appointment.notes = request.form.get('notes')
+            
+            db.session.commit()
+            flash('Appointment updated successfully!', 'success')
+            return redirect(url_for('today_appointments'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Error updating appointment', 'error')
+    
+    return render_template('edit_appointment.html', appointment=appointment)
+
+@app.route('/appointment/<int:appointment_id>/delete', methods=['POST'])
+@login_required
+def delete_appointment(appointment_id):
+    if current_user.role != 'doctor':
+        flash('Only doctors can delete appointments', 'error')
+        return redirect(url_for('index'))
+        
+    appointment = Appointment.query.get_or_404(appointment_id)
+    try:
+        db.session.delete(appointment)
+        db.session.commit()
+        flash('Appointment deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Error deleting appointment', 'error')
+    
+    return redirect(url_for('today_appointments'))
+
+@app.route('/emergency-care')
+def emergency_care():
+    return render_template('emergency_care.html')
+
+@app.route('/specialized-units')
+def specialized_units():
+    return render_template('specialized_units.html')
+
+@app.route('/expert-staff')
+def expert_staff():
+    return render_template('expert_staff.html')
+
+@app.route('/laboratory-services')
+def laboratory_services():
+    return render_template('laboratory_services.html')
 
 if __name__ == '__main__':
     with app.app_context():

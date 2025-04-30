@@ -1,76 +1,379 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>ESP32 Device Management</h2>
-    
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Device Status</h5>
-            <div id="statusDisplay" class="alert alert-info">
-                Checking status...
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Device Management Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-microchip me-2"></i>ESP32 Device Management
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="device-status-card mb-4">
+                                <h6 class="text-muted mb-3">Device Status</h6>
+                                <div id="statusDisplay" class="status-indicator">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <span class="ms-2">Checking status...</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group mb-4">
+                                <label for="deviceId" class="form-label">Device ID</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-fingerprint"></i></span>
+                                    <input type="text" class="form-control" id="deviceId" placeholder="Enter device ID">
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button id="connectBtn" class="btn btn-success">
+                                    <i class="fas fa-plug me-2"></i>Connect Device
+                                </button>
+                                <button id="disconnectBtn" class="btn btn-danger" disabled>
+                                    <i class="fas fa-power-off me-2"></i>Disconnect Device
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="device-info-card">
+                                <h6 class="text-muted mb-3">Device Information</h6>
+                                <div class="info-item">
+                                    <i class="fas fa-clock text-primary"></i>
+                                    <span>Last Connected: <span id="lastConnected">-</span></span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-signal text-success"></i>
+                                    <span>Signal Strength: <span id="signalStrength">-</span></span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-battery-three-quarters text-warning"></i>
+                                    <span>Battery Level: <span id="batteryLevel">-</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="form-group mb-3">
-                <label for="deviceId">Device ID:</label>
-                <input type="text" class="form-control" id="deviceId" placeholder="Enter device ID">
-            </div>
-            
-            <div class="btn-group" role="group">
-                <button id="connectBtn" class="btn btn-success">
-                    <i class="fas fa-plug"></i> Connect
-                </button>
-                <button id="disconnectBtn" class="btn btn-danger" disabled>
-                    <i class="fas fa-power-off"></i> Disconnect
-                </button>
+
+            <!-- Recent Activity Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-history me-2"></i>Recent Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Reading Type</th>
+                                    <th>Value</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="readingsBody">
+                                <!-- Readings will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div class="card mt-4">
-        <div class="card-body">
-            <h5 class="card-title">Recent Readings</h5>
-            <div id="readingsTable">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Reading Type</th>
-                            <th>Value</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="readingsBody">
-                        <!-- Readings will be populated here -->
-                    </tbody>
-                </table>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Emergency Alerts Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Emergency Alerts
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="emergencyAlerts" class="alert-list">
+                        <!-- Emergency alerts will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Appointments Card -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-calendar-check me-2"></i>Today's Appointments
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="appointmentsList" class="appointment-list">
+                        <!-- Appointments will be populated here -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<style>
+.card {
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card-header {
+    border-bottom: none;
+    padding: 1rem;
+}
+
+.device-status-card {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.device-info-card {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.info-item i {
+    margin-right: 1rem;
+    font-size: 1.2rem;
+}
+
+.alert-list, .appointment-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.table th {
+    font-weight: 600;
+    color: white;
+    background-color: #495057;
+}
+
+.table td {
+    color: white;
+    background-color: #343a40;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #454d55 !important;
+}
+
+.table-hover tbody tr:hover td {
+    color: white;
+}
+
+.badge {
+    padding: 0.5em 0.75em;
+    font-weight: 500;
+}
+
+.btn {
+    padding: 0.75rem 1.25rem;
+    font-weight: 500;
+}
+
+.btn i {
+    font-size: 1.1rem;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+}
+
+.form-control {
+    border-left: none;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #ced4da;
+}
+
+/* Custom scrollbar */
+.alert-list::-webkit-scrollbar,
+.appointment-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.alert-list::-webkit-scrollbar-track,
+.appointment-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.alert-list::-webkit-scrollbar-thumb,
+.appointment-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.alert-list::-webkit-scrollbar-thumb:hover,
+.appointment-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.btn-outline-primary {
+    color: white;
+    border-color: white;
+}
+
+.btn-outline-primary:hover {
+    background-color: white;
+    color: #343a40;
+}
+</style>
+
 <script>
 let statusCheckInterval;
 
 function updateStatus(deviceId) {
-    fetch(`/esp32/status/${deviceId}`)
+    fetch(`/api/esp32/status/${deviceId}`)
         .then(response => response.json())
         .then(data => {
             const statusDisplay = document.getElementById('statusDisplay');
-            statusDisplay.className = `alert alert-${data.connected ? 'success' : 'warning'}`;
-            statusDisplay.textContent = data.connected ? 'Connected' : 'Disconnected';
-            
-            document.getElementById('connectBtn').disabled = data.connected;
-            document.getElementById('disconnectBtn').disabled = !data.connected;
+            if (data.status === 'connected') {
+                statusDisplay.innerHTML = `
+                    <div class="status-indicator connected">
+                        <i class="fas fa-check-circle text-success"></i>
+                        <span class="ms-2">Connected</span>
+                    </div>
+                `;
+                document.getElementById('connectBtn').disabled = true;
+                document.getElementById('disconnectBtn').disabled = false;
+                updateDeviceInfo(deviceId);
+            } else {
+                statusDisplay.innerHTML = `
+                    <div class="status-indicator disconnected">
+                        <i class="fas fa-times-circle text-danger"></i>
+                        <span class="ms-2">Disconnected</span>
+                    </div>
+                `;
+                document.getElementById('connectBtn').disabled = false;
+                document.getElementById('disconnectBtn').disabled = true;
+            }
         })
         .catch(error => {
             console.error('Error checking status:', error);
             const statusDisplay = document.getElementById('statusDisplay');
-            statusDisplay.className = 'alert alert-danger';
-            statusDisplay.textContent = 'Error checking status';
+            statusDisplay.innerHTML = `
+                <div class="status-indicator error">
+                    <i class="fas fa-exclamation-circle text-danger"></i>
+                    <span class="ms-2">Error checking status</span>
+                </div>
+            `;
         });
 }
 
+function updateDeviceInfo(deviceId) {
+    document.getElementById('lastConnected').textContent = new Date().toLocaleString();
+    document.getElementById('signalStrength').textContent = 'Strong';
+    document.getElementById('batteryLevel').textContent = '85%';
+}
+
+function updateReadings(deviceId) {
+    fetch(`/api/esp32/readings/${deviceId}`)
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('readingsBody');
+            tbody.innerHTML = '';
+            
+            data.readings.forEach(reading => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${new Date(reading.timestamp).toLocaleString()}</td>
+                    <td>${reading.reading_type}</td>
+                    <td>${reading.value}</td>
+                    <td>
+                        <span class="badge bg-${reading.status === 'normal' ? 'success' : 'danger'}">
+                            ${reading.status}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(error => console.error('Error updating readings:', error));
+}
+
+function updateEmergencyAlerts() {
+    const alertsContainer = document.getElementById('emergencyAlerts');
+    // Sample emergency alerts
+    const alerts = [
+        { type: 'critical', message: 'High blood pressure detected', time: '2 minutes ago' },
+        { type: 'warning', message: 'Irregular heart rate', time: '15 minutes ago' }
+    ];
+    
+    alertsContainer.innerHTML = alerts.map(alert => `
+        <div class="alert alert-${alert.type === 'critical' ? 'danger' : 'warning'} mb-2">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            ${alert.message}
+            <small class="d-block text-muted mt-1">${alert.time}</small>
+        </div>
+    `).join('');
+}
+
+function updateAppointments() {
+    const appointmentsContainer = document.getElementById('appointmentsList');
+    // Sample appointments
+    const appointments = [
+        { time: '09:00 AM', patient: 'John Doe', type: 'Check-up' },
+        { time: '10:30 AM', patient: 'Jane Smith', type: 'Follow-up' }
+    ];
+    
+    appointmentsContainer.innerHTML = appointments.map(appointment => `
+        <div class="appointment-item mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-1">${appointment.time}</h6>
+                    <p class="mb-0 text-muted">${appointment.patient}</p>
+                </div>
+                <span class="badge bg-info">${appointment.type}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Event Listeners
 document.getElementById('connectBtn').addEventListener('click', function() {
     const deviceId = document.getElementById('deviceId').value;
     if (!deviceId) {
@@ -78,7 +381,7 @@ document.getElementById('connectBtn').addEventListener('click', function() {
         return;
     }
     
-    fetch('/esp32/connect', {
+    fetch('/api/esp32/connect', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -87,12 +390,12 @@ document.getElementById('connectBtn').addEventListener('click', function() {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
+        if (data.message) {
             updateStatus(deviceId);
-            // Start periodic status check
             statusCheckInterval = setInterval(() => updateStatus(deviceId), 5000);
+            setInterval(() => updateReadings(deviceId), 5000);
         } else {
-            alert('Failed to connect: ' + data.message);
+            alert('Failed to connect: ' + data.error);
         }
     })
     .catch(error => {
@@ -108,7 +411,7 @@ document.getElementById('disconnectBtn').addEventListener('click', function() {
         return;
     }
     
-    fetch('/esp32/disconnect', {
+    fetch('/api/esp32/disconnect', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -117,14 +420,13 @@ document.getElementById('disconnectBtn').addEventListener('click', function() {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
+        if (data.message) {
             updateStatus(deviceId);
-            // Clear the status check interval
             if (statusCheckInterval) {
                 clearInterval(statusCheckInterval);
             }
         } else {
-            alert('Failed to disconnect: ' + data.message);
+            alert('Failed to disconnect: ' + data.error);
         }
     })
     .catch(error => {
@@ -133,34 +435,10 @@ document.getElementById('disconnectBtn').addEventListener('click', function() {
     });
 });
 
-// Update readings table
-function updateReadings(deviceId) {
-    fetch(`/esp32/readings/${deviceId}`)
-        .then(response => response.json())
-        .then(data => {
-            const tbody = document.getElementById('readingsBody');
-            tbody.innerHTML = '';
-            
-            data.readings.forEach(reading => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${new Date(reading.timestamp).toLocaleString()}</td>
-                    <td>${reading.reading_type}</td>
-                    <td>${reading.value}</td>
-                    <td><span class="badge bg-${reading.status === 'normal' ? 'success' : 'danger'}">${reading.status}</span></td>
-                `;
-                tbody.appendChild(row);
-            });
-        })
-        .catch(error => console.error('Error updating readings:', error));
-}
-
-// Start updating readings when a device is connected
-document.getElementById('connectBtn').addEventListener('click', function() {
-    const deviceId = document.getElementById('deviceId').value;
-    if (deviceId) {
-        setInterval(() => updateReadings(deviceId), 5000);
-    }
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    updateEmergencyAlerts();
+    updateAppointments();
 });
 </script>
 {% endblock %}

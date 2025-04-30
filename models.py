@@ -72,16 +72,18 @@ class HealthReading(db.Model):
 
 class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
-    doctor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    appointment_date = db.Column(db.DateTime, nullable=False)
-    status = db.Column(db.String(20), default='scheduled')  # scheduled, completed, cancelled
+    patient_name = db.Column(db.String(100), nullable=False)
+    appointment_time = db.Column(db.DateTime, nullable=False)
+    reason = db.Column(db.String(200))
+    priority = db.Column(db.String(20))  # High, Medium, Low
     notes = db.Column(db.Text)
+    doctor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    patient = db.relationship('Patient', backref='appointments')
-    doctor = db.relationship('User', backref='appointments')
+    doctor = db.relationship('User', backref=db.backref('appointments', lazy=True))
+    
+    def __repr__(self):
+        return f'<Appointment {self.patient_name} at {self.appointment_time}>'
 
 class Prescription(db.Model):
     id = db.Column(db.Integer, primary_key=True)

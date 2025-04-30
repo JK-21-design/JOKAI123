@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-5">Laboratory Services</h2>
+
+    <!-- Main Services Section -->
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4">
+            <div class="card service-card h-100">
+                <div class="card-header blood-tests-header text-white">
+                    <h4 class="mb-0"><i class="fas fa-vial"></i> Blood Tests</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="service-list">
+                        <li><i class="fas fa-check-circle blood-icon"></i> Complete Blood Count (CBC)</li>
+                        <li><i class="fas fa-check-circle blood-icon"></i> Blood Chemistry</li>
+                        <li><i class="fas fa-check-circle blood-icon"></i> Lipid Profile</li>
+                        <li><i class="fas fa-check-circle blood-icon"></i> Thyroid Function Tests</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card service-card h-100">
+                <div class="card-header other-tests-header text-white">
+                    <h4 class="mb-0"><i class="fas fa-flask"></i> Other Tests</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="service-list">
+                        <li><i class="fas fa-check-circle other-icon"></i> Urinalysis</li>
+                        <li><i class="fas fa-check-circle other-icon"></i> Microbiology Cultures</li>
+                        <li><i class="fas fa-check-circle other-icon"></i> Pathology Services</li>
+                        <li><i class="fas fa-check-circle other-icon"></i> Genetic Testing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Operating Hours Section -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card info-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-clock fa-3x hours-icon mb-3"></i>
+                    <h4 class="hours-title">Operating Hours</h4>
+                    <div class="hours-info">
+                        <p class="emergency-hours">24/7 Emergency Services</p>
+                        <p class="regular-hours">Regular Hours: 7:00 AM - 7:00 PM</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card info-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-phone-alt fa-3x contact-icon mb-3"></i>
+                    <h4 class="contact-title">Contact</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-phone contact-icon"></i> (555) 123-4567</p>
+                        <p><i class="fas fa-envelope contact-icon"></i> lab@jokaihospital.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card info-card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-map-marker-alt fa-3x location-icon mb-3"></i>
+                    <h4 class="location-title">Location</h4>
+                    <p>Main Hospital Building, 1st Floor</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Turnaround Times Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header turnaround-header">
+                    <h4 class="mb-0 text-white"><i class="fas fa-hourglass-half text-white"></i> Test Turnaround Times</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Test Type</th>
+                                    <th class="text-center">Regular Turnaround</th>
+                                    <th class="text-center">Express Turnaround</th>
+                                    <th class="text-center">Emergency Turnaround</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Complete Blood Count</td>
+                                    <td class="text-center">24 hours</td>
+                                    <td class="text-center">4 hours</td>
+                                    <td class="text-center">1 hour</td>
+                                </tr>
+                                <tr>
+                                    <td>Blood Chemistry</td>
+                                    <td class="text-center">24 hours</td>
+                                    <td class="text-center">4 hours</td>
+                                    <td class="text-center">1 hour</td>
+                                </tr>
+                                <tr>
+                                    <td>Microbiology Cultures</td>
+                                    <td class="text-center">48-72 hours</td>
+                                    <td class="text-center">24 hours</td>
+                                    <td class="text-center">12 hours</td>
+                                </tr>
+                                <tr>
+                                    <td>Pathology</td>
+                                    <td class="text-center">3-5 days</td>
+                                    <td class="text-center">24 hours</td>
+                                    <td class="text-center">12 hours</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Blood Tests Section */
+    .blood-tests-header {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+    }
+    .blood-icon {
+        color: #e74c3c;
+    }
+
+    /* Other Tests Section */
+    .other-tests-header {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+    }
+    .other-icon {
+        color: #2ecc71;
+    }
+
+    /* Hours Section */
+    .hours-icon {
+        color: #3498db;
+    }
+    .hours-title {
+        color: #3498db;
+    }
+
+    /* Contact Section */
+    .contact-icon {
+        color: #9b59b6;
+    }
+    .contact-title {
+        color: #9b59b6;
+    }
+
+    /* Location Section */
+    .location-icon {
+        color: #f1c40f;
+    }
+    .location-title {
+        color: #f1c40f;
+    }
+
+    /* Turnaround Times Section */
+    .turnaround-header {
+        background: linear-gradient(135deg, #34495e, #2c3e50);
+    }
+
+    .turnaround-header h4,
+    .turnaround-header i {
+        color: white !important;
+    }
+
+    .service-card, .info-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .service-card:hover, .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+        padding: 1.25rem;
+    }
+
+    .card-header h4 {
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .service-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .service-list li {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .service-list li:last-child {
+        border-bottom: none;
+    }
+
+    .service-list i {
+        font-size: 1.1rem;
+    }
+
+    .hours-info, .contact-info {
+        margin-top: 1rem;
+    }
+
+    .emergency-hours {
+        color: #e74c3c;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .regular-hours {
+        color: var(--text-color);
+    }
+
+    .contact-info p {
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table th {
+        background-color: rgba(52, 73, 94, 0.1);
+        font-weight: 600;
+        color: #34495e;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(52, 73, 94, 0.05);
+    }
+
+    @media (max-width: 768px) {
+        .service-card, .info-card {
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+{% endblock %} 

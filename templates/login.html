@@ -14,7 +14,10 @@
                     {% with messages = get_flashed_messages(with_categories=true) %}
                         {% if messages %}
                             {% for category, message in messages %}
-                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
                             {% endfor %}
                         {% endif %}
                     {% endwith %}
@@ -22,11 +25,16 @@
                         <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
                         <div class="form-group mb-3">
                             <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
+                            <input type="text" class="form-control" id="username" name="username" value="{{ username if username else '' }}" required>
                         </div>
                         <div class="form-group mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" name="password" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="form-check mb-3">
                             <input type="checkbox" class="form-check-input" id="remember" name="remember">
@@ -45,6 +53,38 @@
         </div>
     </div>
 </div>
+
+<style>
+.alert {
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.input-group .btn-outline-secondary {
+    border-color: #ced4da;
+}
+
+.input-group .btn-outline-secondary:hover {
+    background-color: #e9ecef;
+}
+</style>
 
 <script>
 document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -68,14 +108,33 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     .then(data => {
         if (data && data.error) {
             const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-error';
-            alertDiv.textContent = data.error;
+            alertDiv.className = 'alert alert-error alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                ${data.error}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
             this.insertBefore(alertDiv, this.firstChild);
         }
     })
     .catch(error => {
         console.error('Error:', error);
     });
+});
+
+// Toggle password visibility
+document.getElementById('togglePassword').addEventListener('click', function() {
+    const passwordInput = document.getElementById('password');
+    const icon = this.querySelector('i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
 });
 </script>
 {% endblock %}

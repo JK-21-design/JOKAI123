@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-5">Specialized Care Units</h2>
+    
+    <div class="row">
+        <!-- ICU Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card unit-card h-100">
+                <div class="card-header bg-primary text-white text-center">
+                    <i class="fas fa-procedures fa-2x mb-2 text-white"></i>
+                    <h4 class="card-title mb-0 text-white">Intensive Care Unit (ICU)</h4>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Our ICU provides critical care for patients with life-threatening conditions, featuring advanced monitoring systems and specialized medical staff.</p>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <i class="fas fa-clock text-primary"></i>
+                            <span>24/7 Monitoring</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-lungs text-primary"></i>
+                            <span>Ventilator Support</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-user-nurse text-primary"></i>
+                            <span>Specialized Nursing Care</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CCU Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card unit-card h-100">
+                <div class="card-header bg-danger text-white text-center">
+                    <i class="fas fa-heartbeat fa-2x mb-2"></i>
+                    <h4 class="card-title mb-0">Cardiac Care Unit (CCU)</h4>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Dedicated to cardiac patients, our CCU offers specialized care for heart conditions with state-of-the-art cardiac monitoring equipment.</p>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <i class="fas fa-heartbeat text-danger"></i>
+                            <span>ECG Monitoring</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-walking text-danger"></i>
+                            <span>Cardiac Rehabilitation</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-heart text-danger"></i>
+                            <span>Heart Failure Management</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NICU Card -->
+        <div class="col-md-4 mb-4">
+            <div class="card unit-card h-100">
+                <div class="card-header bg-success text-white text-center">
+                    <i class="fas fa-baby fa-2x mb-2"></i>
+                    <h4 class="card-title mb-0">Neonatal ICU (NICU)</h4>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Our NICU provides specialized care for premature and critically ill newborns with advanced neonatal care technology.</p>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <i class="fas fa-thermometer-half text-success"></i>
+                            <span>Temperature Control</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-wind text-success"></i>
+                            <span>Respiratory Support</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-baby text-success"></i>
+                            <span>Developmental Care</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unit Statistics Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card stats-card">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">Unit Statistics</h3>
+                    <div class="row">
+                        <div class="col-md-3 mb-4">
+                            <div class="stat-box text-center">
+                                <div class="stat-icon">
+                                    <i class="fas fa-bed fa-2x text-primary"></i>
+                                </div>
+                                <h4 class="stat-number">20</h4>
+                                <p class="stat-label">ICU Beds</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="stat-box text-center">
+                                <div class="stat-icon">
+                                    <i class="fas fa-heartbeat fa-2x text-danger"></i>
+                                </div>
+                                <h4 class="stat-number">15</h4>
+                                <p class="stat-label">CCU Beds</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="stat-box text-center">
+                                <div class="stat-icon">
+                                    <i class="fas fa-baby fa-2x text-success"></i>
+                                </div>
+                                <h4 class="stat-number">25</h4>
+                                <p class="stat-label">NICU Beds</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="stat-box text-center">
+                                <div class="stat-icon">
+                                    <i class="fas fa-user-nurse fa-2x text-info"></i>
+                                </div>
+                                <h4 class="stat-number">1:2</h4>
+                                <p class="stat-label">Staff Ratio</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .unit-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .unit-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .card-header {
+        padding: 1.5rem;
+        border-bottom: none;
+    }
+
+    .card-header i {
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+    .features-list {
+        margin-top: 1.5rem;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        border-radius: 8px;
+        background-color: rgba(0,0,0,0.02);
+    }
+
+    .feature-item i {
+        margin-right: 1rem;
+        width: 24px;
+        text-align: center;
+    }
+
+    .stats-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .stat-box {
+        padding: 1.5rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+    }
+
+    .stat-box:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: rgba(0,0,0,0.05);
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 0.5rem 0;
+        color: var(--primary-color);
+    }
+
+    .stat-label {
+        color: var(--text-color);
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    .text-primary { color: var(--primary-color) !important; }
+    .text-danger { color: var(--danger-color) !important; }
+    .text-success { color: var(--success-color) !important; }
+    .text-info { color: var(--secondary-color) !important; }
+
+    .bg-primary { background-color: var(--primary-color) !important; }
+    .bg-danger { background-color: var(--danger-color) !important; }
+    .bg-success { background-color: var(--success-color) !important; }
+
+    /* ICU Card specific styles */
+    .card-header.bg-primary {
+        color: white !important;
+    }
+    
+    .card-header.bg-primary i,
+    .card-header.bg-primary h4 {
+        color: white !important;
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Today's Appointments</h2>
+    
+    <!-- Add New Appointment Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Add New Appointment</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('today_appointments') }}">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="patient_name" class="form-label">Patient Name</label>
+                        <input type="text" class="form-control" id="patient_name" name="patient_name" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="appointment_time" class="form-label">Appointment Time</label>
+                        <input type="datetime-local" class="form-control" id="appointment_time" name="appointment_time" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="reason" class="form-label">Reason for Visit</label>
+                        <input type="text" class="form-control" id="reason" name="reason" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="priority" class="form-label">Priority</label>
+                        <select class="form-select" id="priority" name="priority" required>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Notes</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Appointments List -->
+    <div class="card">
+        <div class="card-header">
+            <h4>Today's Schedule</h4>
+        </div>
+        <div class="card-body">
+            <!-- Search and Filter Section -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by patient name or reason...">
+                </div>
+                <div class="col-md-3">
+                    <select id="priorityFilter" class="form-select">
+                        <option value="">All Priorities</option>
+                        <option value="High">High Priority</option>
+                        <option value="Medium">Medium Priority</option>
+                        <option value="Low">Low Priority</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select id="timeFilter" class="form-select">
+                        <option value="">All Times</option>
+                        <option value="morning">Morning (6AM-12PM)</option>
+                        <option value="afternoon">Afternoon (12PM-6PM)</option>
+                        <option value="evening">Evening (6PM-12AM)</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-secondary w-100" onclick="resetFilters()">Reset Filters</button>
+                </div>
+            </div>
+
+            {% if appointments %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Patient Name</th>
+                            <th>Reason</th>
+                            <th>Priority</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in appointments %}
+                        <tr>
+                            <td>{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
+                            <td>{{ appointment.patient_name }}</td>
+                            <td>{{ appointment.reason }}</td>
+                            <td>
+                                <span class="badge {% if appointment.priority == 'High' %}bg-danger{% elif appointment.priority == 'Medium' %}bg-warning{% else %}bg-success{% endif %}">
+                                    {{ appointment.priority }}
+                                </span>
+                            </td>
+                            <td>{{ appointment.notes }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editAppointment({{ appointment.id }})">Edit</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteAppointment({{ appointment.id }})">Delete</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-center">No appointments scheduled for today.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function editAppointment(id) {
+    window.location.href = `/appointment/${id}/edit`;
+}
+
+function deleteAppointment(id) {
+    if (confirm('Are you sure you want to delete this appointment?')) {
+        fetch(`/appointment/${id}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Error deleting appointment');
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting appointment');
+        });
+    }
+}
+
+// New search and filter functions
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const priorityFilter = document.getElementById('priorityFilter');
+    const timeFilter = document.getElementById('timeFilter');
+    
+    function filterAppointments() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const priorityValue = priorityFilter.value;
+        const timeValue = timeFilter.value;
+        
+        const rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            const patientName = row.cells[1].textContent.toLowerCase();
+            const reason = row.cells[2].textContent.toLowerCase();
+            const priority = row.cells[3].textContent.trim();
+            const time = row.cells[0].textContent;
+            
+            // Search term filter
+            const matchesSearch = patientName.includes(searchTerm) || reason.includes(searchTerm);
+            
+            // Priority filter
+            const matchesPriority = !priorityValue || priority === priorityValue;
+            
+            // Time filter
+            let matchesTime = true;
+            if (timeValue) {
+                const hour = parseInt(time.split(':')[0]);
+                const isAM = time.includes('AM');
+                const hour24 = isAM ? hour : (hour === 12 ? 12 : hour + 12);
+                
+                if (timeValue === 'morning') {
+                    matchesTime = hour24 >= 6 && hour24 < 12;
+                } else if (timeValue === 'afternoon') {
+                    matchesTime = hour24 >= 12 && hour24 < 18;
+                } else if (timeValue === 'evening') {
+                    matchesTime = hour24 >= 18 || hour24 < 6;
+                }
+            }
+            
+            // Show/hide row based on all filters
+            row.style.display = matchesSearch && matchesPriority && matchesTime ? '' : 'none';
+        });
+    }
+    
+    searchInput.addEventListener('input', filterAppointments);
+    priorityFilter.addEventListener('change', filterAppointments);
+    timeFilter.addEventListener('change', filterAppointments);
+});
+
+function resetFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('priorityFilter').value = '';
+    document.getElementById('timeFilter').value = '';
+    
+    // Show all rows
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => row.style.display = '');
+}
+</script>
+{% endblock %} 

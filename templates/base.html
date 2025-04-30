@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Jokai Hospital{% endblock %}</title>
+    <title>{% block title %}JOKAI Hospital{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -521,6 +521,32 @@
                 margin: 0 -1rem;
             }
         }
+
+        .flash-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            min-width: 300px;
+            padding: 15px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .flash-message.success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .flash-message.error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -531,74 +557,40 @@
             <a href="{{ url_for('index') }}" class="hospital-name">JOKAI Hospital</a>
         </div>
         <div class="nav-container">
-            {% if current_user.is_authenticated %}
             <div class="nav-links main-nav">
                 <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a>
-                <a href="{{ url_for('view_all_readings') }}"><i class="fas fa-chart-line"></i> Readings</a>
+                <a href="{{ url_for('view_all_readings') }}"><i class="fas fa-heartbeat"></i> Readings</a>
                 <a href="{{ url_for('list_patients') }}"><i class="fas fa-users"></i> Patients</a>
                 <a href="{{ url_for('esp32_management') }}"><i class="fas fa-microchip"></i> ESP32</a>
-                <a href="{{ url_for('profile') }}"><i class="fas fa-user"></i> Profile</a>
             </div>
             <div class="nav-links user-nav">
-                <span class="user-name">{{ current_user.full_name }}</span>
-                <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('profile') }}"><i class="fas fa-user"></i> Profile</a>
+                    <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+                {% endif %}
             </div>
-            {% else %}
-            <div class="nav-links main-nav">
-                <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a>
-                <a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> About</a>
-                <a href="{{ url_for('contact') }}"><i class="fas fa-envelope"></i> Contact</a>
-            </div>
-            <div class="nav-links user-nav">
-                <a href="{{ url_for('login') }}" class="login-btn"><i class="fas fa-sign-in-alt"></i> Login</a>
-                <a href="{{ url_for('register_user') }}" class="register-btn"><i class="fas fa-user-plus"></i> Register</a>
-            </div>
-            {% endif %}
         </div>
     </nav>
-    <main class="content">
+
+    <div class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show text-center flash-message {{ category }}" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
         {% block content %}{% endblock %}
-    </main>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-
+    </div>
 
     <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="{{ url_for('index') }}">Home</a></li>
-                    <li><a href="{{ url_for('about') }}">About Us</a></li>
-                    <li><a href="{{ url_for('submit_reading') }}">Submit Reading</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contact Us</h3>
-                <p>Email: info@jokaihospital.com</p>
-                <p>Phone: +254 700 000 000</p>
-            </div>
-            <div class="footer-section">
-                <h3>Follow Us</h3>
-                <div class="social-links">
-                    <a href="#" class="social-icon">Facebook</a>
-                    <a href="#" class="social-icon">Twitter</a>
-                    <a href="#" class="social-icon">LinkedIn</a>
-                </div>
-            </div>
-        </div>
-        <div class="copyright">
-            <p>&copy; 2025 Jokai National Hospital. All Rights Reserved.</p>
-        </div>
+        <p>&copy; 2024 JOKAI Hospital. All rights reserved.</p>
     </footer>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
