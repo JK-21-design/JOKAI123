@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}New Appointment - Jokai Hospital{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2><i class="fas fa-calendar-plus"></i> Schedule New Appointment</h2>
+        <form method="POST" class="appointment-form">
+            <div class="form-group">
+                <label for="patient_name">Patient Name</label>
+                <input type="text" id="patient_name" name="patient_name" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="doctor_name">Doctor Name</label>
+                <select id="doctor_name" name="doctor_name" class="form-control" required>
+                    <option value="">Select Doctor</option>
+                    <option value="John Smith">Dr. John Smith</option>
+                    <option value="Sarah Johnson">Dr. Sarah Johnson</option>
+                    <option value="Michael Lee">Dr. Michael Lee</option>
+                    <option value="Emily Brown">Dr. Emily Brown</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="department">Department</label>
+                <select id="department" name="department" class="form-control" required>
+                    <option value="">Select Department</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Neurology">Neurology</option>
+                    <option value="Orthopedics">Orthopedics</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="General Medicine">General Medicine</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="appointment_date">Appointment Date</label>
+                <input type="date" id="appointment_date" name="appointment_date" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="appointment_time">Appointment Time</label>
+                <input type="time" id="appointment_time" name="appointment_time" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="appointment_type">Appointment Type</label>
+                <select id="appointment_type" name="appointment_type" class="form-control" required>
+                    <option value="">Select Type</option>
+                    <option value="Regular">Regular Checkup</option>
+                    <option value="Emergency">Emergency</option>
+                    <option value="Follow-up">Follow-up</option>
+                    <option value="Consultation">Consultation</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Notes (Optional)</label>
+                <textarea id="notes" name="notes" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Schedule Appointment
+                </button>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .form-container {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container h2 {
+        color: var(--primary-color);
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .appointment-form {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-group label {
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    .form-control {
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(0, 64, 128, 0.1);
+    }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    @media (max-width: 640px) {
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .form-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

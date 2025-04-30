@@ -533,7 +533,7 @@
         <div class="nav-container">
             {% if current_user.is_authenticated %}
             <div class="nav-links main-nav">
-                <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a>
+                <a href="{{ url_for('dashboard') }}"><i class="fas fa-home"></i> Home</a>
                 <a href="{{ url_for('view_all_readings') }}"><i class="fas fa-chart-line"></i> Readings</a>
                 <a href="{{ url_for('list_patients') }}"><i class="fas fa-users"></i> Patients</a>
                 <a href="{{ url_for('esp32_management') }}"><i class="fas fa-microchip"></i> ESP32</a>

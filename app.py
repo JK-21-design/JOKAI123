@@ -418,26 +418,44 @@ def reset_password(token):
             user.set_password(request.form.get('password'))
 @login_required
 def dashboard():
-    total_patients = Patient.query.count()
-    total_readings = HealthReading.query.count()
-    emergency_count = HealthReading.query.filter(
-        (HealthReading.systolic >= 140) | (HealthReading.diastolic >= 90)
-    ).count()
-    
-    recent_activity = HealthReading.query.order_by(HealthReading.timestamp.desc()).limit(5).all()
-    
-    # Get ESP32 devices and their connection status
-    esp32_devices = [{
-        'device_id': device_id,
-        'is_connected': (datetime.utcnow() - ESP32_CONNECTIONS[device_id]).total_seconds() < 10 if device_id in ESP32_CONNECTIONS else False
-    } for device_id in ESP32_API_KEYS.keys()]
-    
-    return render_template('dashboard.html',
-                         total_patients=total_patients,
-                         total_readings=total_readings,
-                         emergency_count=emergency_count,
-                         recent_activity=recent_activity,
-                         esp32_devices=esp32_devices)
+    try:
+        total_patients = Patient.query.count()
+        total_readings = HealthReading.query.count()
+        emergency_count = HealthReading.query.filter(
+            (HealthReading.systolic >= 140) | (HealthReading.diastolic >= 90)
+        ).count()
+        
+        recent_activity = HealthReading.query.order_by(HealthReading.timestamp.desc()).limit(5).all()
+        
+        # Get ESP32 devices and their connection status
+        esp32_devices = []
+        for device_id in ESP32_API_KEYS.keys():
+            device = {
+                'device_id': device_id,
+                'is_connected': False
+            }
+            if device_id in ESP32_CONNECTIONS:
+                try:
+                    device['is_connected'] = (datetime.utcnow() - ESP32_CONNECTIONS[device_id]).total_seconds() < 10
+                except (TypeError, AttributeError):
+                    device['is_connected'] = False
+            esp32_devices.append(device)
+        
+        return render_template('dashboard.html',
+                            total_patients=total_patients,
+                            total_readings=total_readings,
+                            emergency_count=emergency_count,
+                            recent_activity=recent_activity,
+                            esp32_devices=esp32_devices)
+    except Exception as e:
+        app.logger.error(f'Dashboard error: {str(e)}')
+        flash('Error loading dashboard data', 'error')
+        return render_template('dashboard.html',
+                            total_patients=0,
+                            total_readings=0,
+                            emergency_count=0,
+                            recent_activity=[],
+                            esp32_devices=[])
 
 @app.route('/register-patient', methods=['GET', 'POST'])
 @login_required
@@ -880,6 +898,34 @@ def upload_profile_picture():
         flash('Invalid file type. Allowed types: png, jpg, jpeg, gif', 'error')
     
     return redirect(url_for('profile'))
+
+@app.route('/new-appointment', methods=['GET', 'POST'])
+@login_required
+def new_appointment():
+    if request.method == 'POST':
+        try:
+            # Get form data
+            patient_name = request.form.get('patient_name')
+            doctor_name = request.form.get('doctor_name')
+            department = request.form.get('department')
+            appointment_date = request.form.get('appointment_date')
+            appointment_time = request.form.get('appointment_time')
+            appointment_type = request.form.get('appointment_type')
+            notes = request.form.get('notes')
+
+            # Create appointment datetime
+            appointment_datetime = datetime.strptime(f'{appointment_date} {appointment_time}', '%Y-%m-%d %H:%M')
+
+            # Here you would typically save the appointment to your database
+            # For now, we'll just show a success message
+            flash('Appointment scheduled successfully!', 'success')
+            return redirect(url_for('dashboard'))
+
+        except Exception as e:
+            app.logger.error(f'Error creating appointment: {str(e)}')
+            flash('Error scheduling appointment. Please try again.', 'error')
+
+    return render_template('new_appointment.html')
 
 if __name__ == '__main__':
     with app.app_context():

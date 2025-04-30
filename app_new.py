@@ -533,8 +533,8 @@ def dashboard():
     # Get today's appointments
     today = datetime.now().date()
     today_appointments = Appointment.query.filter(
-        db.func.date(Appointment.appointment_time) == today
-    ).order_by(Appointment.appointment_time).all()
+        db.func.date(Appointment.appointment_date) == today
+    ).order_by(Appointment.appointment_date).all()
 
     return render_template('dashboard.html',
                          total_patients=total_patients,
@@ -834,8 +834,119 @@ def create_test_user():
         else:
             print("Test user already exists!")
 
+@app.route('/view-all-readings')
+@login_required
+def view_all_readings():
+    patients = Patient.query.all()
+    all_data = []
+
+    # Initialize counters for abnormal readings
+    temp_high_count = 0
+    temp_normal_count = 0
+    temp_low_count = 0
+    bp_high_count = 0
+    bp_normal_count = 0
+    bp_low_count = 0
+    hr_high_count = 0
+    hr_normal_count = 0
+    hr_low_count = 0
+
+    for patient in patients:
+        readings = HealthReading.query.filter_by(patient_id=patient.id).order_by(HealthReading.timestamp.desc()).all()
+        
+        # Count abnormal readings for each patient
+        for reading in readings:
+            if reading.reading_type == 'temp':
+                if reading.temperature > 38:
+                    temp_high_count += 1
+                elif reading.temperature < 36:
+                    temp_low_count += 1
+                else:
+                    temp_normal_count += 1
+            elif reading.reading_type == 'bp':
+                if reading.systolic >= 140 or reading.diastolic >= 90:
+                    bp_high_count += 1
+                elif reading.systolic < 90 or reading.diastolic < 60:
+                    bp_low_count += 1
+                else:
+                    bp_normal_count += 1
+            elif reading.reading_type == 'hr':
+                if reading.heart_rate > 100:
+                    hr_high_count += 1
+                elif reading.heart_rate < 60:
+                    hr_low_count += 1
+                else:
+                    hr_normal_count += 1
+
+        all_data.append({
+            'patient': patient,
+            'readings': readings
+        })
+
+    return render_template('all_readings.html', 
+                         data=all_data,
+                         temp_high_count=temp_high_count,
+                         temp_normal_count=temp_normal_count,
+                         temp_low_count=temp_low_count,
+                         bp_high_count=bp_high_count,
+                         bp_normal_count=bp_normal_count,
+                         bp_low_count=bp_low_count,
+                         hr_high_count=hr_high_count,
+                         hr_normal_count=hr_normal_count,
+                         hr_low_count=hr_low_count)
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+        
+        if user:
+            # Generate a unique token
+            token = serializer.dumps(user.email, salt='password-reset-salt')
+            
+            # Create the reset password link
+            reset_url = url_for('reset_password', token=token, _external=True)
+            
+            # Create and send the email
+            msg = Message('Password Reset Request',
+                        recipients=[user.email])
+            msg.body = f'''To reset your password, visit the following link:
+{reset_url}
+
+If you did not make this request, simply ignore this email.
+'''
+            mail.send(msg)
+            
+            flash('Password reset instructions sent to your email.', 'info')
+            return redirect(url_for('login'))
+        
+        flash('Email address not found.', 'error')
+        return redirect(url_for('forgot_password'))
+    
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    try:
+        email = serializer.loads(token, salt='password-reset-salt', max_age=3600)  # Token expires in 1 hour
+    except:
+        flash('The password reset link is invalid or has expired.', 'error')
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        user = User.query.filter_by(email=email).first()
+        if user:
+            new_password = request.form.get('password')
+            user.set_password(new_password)
+            db.session.commit()
+            flash('Your password has been updated!', 'success')
+            return redirect(url_for('login'))
+    
+    return render_template('reset_password.html')
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         create_test_user()  # Create test user if it doesn't exist
-    app.run(debug=True) 
+    app.run(debug=True, host='0.0.0.0', port=5000)
