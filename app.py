@@ -12,68 +12,41 @@ import os
 from datetime import datetime, timedelta
 from pytz import timezone
 import random
-from werkzeug.routing.exceptions import BuildError
 from werkzeug.utils import secure_filename
 
 # Load environment variables from .env file
 load_dotenv()
 
+# Create upload folder if it doesn't exist
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'profile_pictures')
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
 app = Flask(__name__)
-app.config['DEBUG'] = os.environ.get('FLASK_ENV') != 'production'
+app.config['DEBUG'] = True
 CORS(app)
-app.secret_key = os.environ.get('SECRET_KEY', 'secret-key')
-
-# Add these configurations after the existing app configurations
-UPLOAD_FOLDER = 'static/profile_pictures'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.errorhandler(BuildError)
-def handle_build_error(error):
-    app.logger.error(f'URL build error: {error}')
-    return f'Error building URL: {error}', 500
-
-# Email configuration
-app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
-app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
-app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True').lower() == 'true'
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
-
-# Initialize Flask-Mail
-mail = Mail(app)
-
-# Initialize serializer for password reset tokens
-serializer = URLSafeTimedSerializer(app.secret_key)
-
-# Initialize Flask-Login
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
-
-# Initialize Cache
-cache = Cache(app, config={
-    'CACHE_TYPE': 'simple',
-    'CACHE_DEFAULT_TIMEOUT': 300
-})
-
-# Initialize Compress
-Compress(app)
+app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 
 # Database configuration
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'iot_health.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize database
-db.init_app(app)
+# File upload configuration
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-# Initialize Flask-Migrate
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Initialize extensions
+db.init_app(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+mail = Mail(app)
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+Compress(app)
 migrate = Migrate(app, db)
 
 # ESP32 API Key configuration
@@ -891,10 +864,6 @@ def upload_profile_picture():
         return redirect(url_for('profile'))
     
     if file and allowed_file(file.filename):
-        # Create upload folder if it doesn't exist
-        if not os.path.exists(app.config['UPLOAD_FOLDER']):
-            os.makedirs(app.config['UPLOAD_FOLDER'])
-        
         # Secure the filename and add timestamp to make it unique
         filename = secure_filename(file.filename)
         timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
@@ -1047,4 +1016,4 @@ def laboratory_services():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
